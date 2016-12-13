@@ -1,0 +1,14 @@
+cmlservice.cml:
+  path: '/cmlservice/1c'
+  defaults:
+    _controller: '\Drupal\cmlservice\Controller\Cml::cml'
+    _title: 'CMl Import'
+  requirements:
+    _permission: 'access content'
+cmlservice.settings:
+  path: '/admin/config/system/cmlservice'
+  defaults:
+    _form: '\Drupal\cmlservice\Form\Settings'
+    _title: 'CML Service Settings'
+  requirements:
+    _permission: 'administer nodes'

@@ -1,0 +1,6 @@
+name: cmlservice
+type: module
+description: cml cmlservice
+core: 8.x
+package: synapse
+

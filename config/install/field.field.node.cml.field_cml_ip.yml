@@ -1,0 +1,18 @@
+langcode: ru
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cml_ip
+    - node.type.cml
+id: node.cml.field_cml_ip
+field_name: field_cml_ip
+entity_type: node
+bundle: cml
+label: IP
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

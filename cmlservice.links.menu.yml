@@ -1,0 +1,5 @@
+cmlservice.settings:
+  title: 'CML service Settings'
+  parent: system.admin_config_system
+  description: 'cmlservice Settings'
+  route_name: cmlservice.settings
