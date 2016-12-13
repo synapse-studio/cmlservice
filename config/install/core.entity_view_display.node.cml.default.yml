@@ -1,0 +1,47 @@
+langcode: ru
+status: true
+dependencies:
+  config:
+    - field.field.node.cml.field_cml_ip
+    - field.field.node.cml.field_cml_login
+    - field.field.node.cml.field_cml_type
+    - field.field.node.cml.field_cml_xml
+    - node.type.cml
+  module:
+    - file
+    - options
+    - user
+id: node.cml.default
+targetEntityType: node
+bundle: cml
+mode: default
+content:
+  field_cml_ip:
+    weight: 2
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_cml_login:
+    weight: 1
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_cml_type:
+    weight: 0
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  field_cml_xml:
+    weight: 3
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
+hidden:
+  langcode: true
+  links: true
