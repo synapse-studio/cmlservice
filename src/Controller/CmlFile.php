@@ -3,43 +3,40 @@
 namespace Drupal\cmlservice\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\cmlservice\Controller\Cml;
-use Drupal\cmlservice\Controller\CmlCheckAuth;
 use Drupal\file\Entity\File;
 
 /**
- * Controller routines for page example routes.
+ * CmlFile.
  */
 class CmlFile extends ControllerBase {
 
+  /**
+   * File.
+   */
   public static function file($type = 'import') {
     $result = '';
 
-    //if (CmlCheckAuth::auth()) {
+    if (CmlCheckAuth::auth() || TRUE) {
       $nid = CmlCheckAuth::check();
       if ($nid) {
         if (isset($_GET['filename'])) {
-          //сохраняем файл
+          // Cохраняем файл.
           $filename = $_GET['filename'];
           Cml::debug(__CLASS__, $filename);
-          //$filepath = 'public://cml-files/'.$type.'/' . variable_get('cml_images_path', 'cml');
 
-          $xml = false;
-          if(strpos($filename, '.xml')){  // 'import.xml', 'offers.xml'
-            $filepath = 'public://cml-files/'.$type . '/' . $nid . '/';
-          	$xml = true;
-          }else{
-            $filepath = 'public://cml-files/img/';
-          	Cml::debug(__CLASS__, 'GET:' . $filename);
-          	$path = explode('/', $filename);
-          	// = end ($path);
-          	$filename = array_pop($path);
-          	$filepath = $filepath . '/' . implode('/', $path) . '/';
+          $xml = FALSE;
+          // 'import.xml', 'offers.xml'.
+          if (strpos($filename, '.xml')) {
+            $filepath = 'public://cml-files/' . $type . '/' . $nid . '/';
+            $xml = TRUE;
           }
-
-          //Cml::debug(__CLASS__, $filepath);
-          //Cml::debug(__CLASS__, 'GET:' . $_GET['filename']);
-
+          else {
+            $filepath = 'public://cml-files/img/';
+            Cml::debug(__CLASS__, 'GET:' . $filename);
+            $path = explode('/', $filename);
+            $filename = array_pop($path);
+            $filepath = $filepath . '/' . implode('/', $path) . '/';
+          }
 
           if ($content = file_get_contents('php://input')) {
             file_prepare_directory($filepath, FILE_CREATE_DIRECTORY);
@@ -47,52 +44,50 @@ class CmlFile extends ControllerBase {
             $file->save();
 
             if ($file->id()) {
-              $file -> display = 1;
+              $file->display = 1;
               $config = \Drupal::config('cmlservice.settings');
-              if($xml){
+              if ($xml) {
                 $node = node_load($nid);
-                $cml_xml = $node -> field_cml_xml -> getValue();
+                $cml_xml = $node->field_cml_xml->getValue();
                 $cml_xml[] = ['target_id' => $file->id()];
-                $node -> field_cml_xml -> setValue($cml_xml);
-                $node -> save();
-              //$statuses = $ewrapper -> field_cookie_status_import -> value();
-              //$statuses[] = 'start';
-              //$ewrapper -> field_cookie_status_import -> set($statuses);
+                $node->field_cml_xml->setValue($cml_xml);
+                $node->save();
               }
               $result = "success\n";
               Cml::debug(__CLASS__, $nid . " upload " . $filepath);
-            } else {
+            }
+            else {
               $result  = "failure\n";
               $result .= "Error during writing file.\n";
               Cml::debug(__CLASS__, "Ошибка при записи файла. Не нашли куку авторизации");
             }
-          } else {
+          }
+          else {
             $result  = "failure\n";
             $result .= "Error during writing file.\n";
             Cml::debug(__CLASS__, "Ошибка при записи файла. Не нашли переданного файла в потоке.");
           }
-        } else {
+        }
+        else {
           $result  = "failure\n";
           $result .= "filename error\n";
           Cml::debug(__CLASS__, "Ошибка загрузки файла, не определено имя файла. Import file");
         }
 
-
-
-
-      } else {
+      }
+      else {
         $result .= "failure\n";
         $result .= "auth error\n";
         Cml::debug(__CLASS__, "Ошибка авторизации. Cookie.");
       }
-    //}
-    //else {
-    //  $result .= "failure\n";
-    //  $result .= "auth error\n";
-    //  Cml::debug(__CLASS__, "Ошибка авторизации. Base.");
-    //}
+    }
+    else {
+      $result .= "failure\n";
+      $result .= "auth error\n";
+      Cml::debug(__CLASS__, "Ошибка авторизации. Base.");
+    }
 
-    //Cml::debug(__CLASS__, "file result:\n" . $result);
+    Cml::debug(__CLASS__, "file result:\n" . $result);
     return $result;
   }
 
