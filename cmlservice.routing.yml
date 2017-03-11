@@ -6,7 +6,7 @@ cmlservice.cml:
   requirements:
     _permission: 'access content'
 cmlservice.settings:
-  path: '/admin/config/system/cmlservice'
+  path: '/admin/config/synapse/cmlservice'
   defaults:
     _form: '\Drupal\cmlservice\Form\Settings'
     _title: 'CML Service Settings'
