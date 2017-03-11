@@ -53,12 +53,17 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: mini
+        type: full
         options:
-          items_per_page: 10
+          items_per_page: 20
           offset: 0
           id: 0
           total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
+            first: '« Первая'
+            last: 'Последняя »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -67,9 +72,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          tags:
-            previous: ‹‹
-            next: ››
+          quantity: 9
       style:
         type: table
         options:
@@ -516,7 +519,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<a target=\"_blank\" href=\"/cmlparser/{{ nid }}/catalog\" class=\"btn btn-primary btn-sm\">catalog</a>\n<a target=\"_blank\" href=\"/cmlparser/{{ nid }}/products\" class=\"btn btn-primary btn-sm\">products</a>\n<a target=\"_blank\" href=\"/cmlparser/{{ nid }}/offers\" class=\"btn btn-primary btn-sm\">offers</a>"
+            text: "<a target=\"_blank\" href=\"/cmlparser/{{ nid }}/catalog\" class=\"btn btn-primary btn-sm\">catalog</a>\n<a target=\"_blank\" href=\"/cmlparser/{{ nid }}/tovars\" class=\"btn btn-primary btn-sm\">tovars</a>\n<a target=\"_blank\" href=\"/cmlparser/{{ nid }}/offers\" class=\"btn btn-primary btn-sm\">offers</a>"
             make_link: false
             path: ''
             absolute: false
@@ -633,7 +636,7 @@ display:
           admin_label: ''
           empty: false
           tokenize: false
-          content: "<h3>Последняя выгрузка</h3>\n<a target=\"_blank\" href=\"/cmlparser/last/catalog\" class=\"btn btn-primary btn-sm\">catalog</a>\n<a target=\"_blank\" href=\"/cmlparser/last/products\" class=\"btn btn-primary btn-sm\">products</a>\n<a target=\"_blank\" href=\"/cmlparser/last/offers\" class=\"btn btn-primary btn-sm\">offers</a>\n<br /><br />\n<h3>Список всех выгрузок</h3>"
+          content: "<h3>Последняя выгрузка</h3>\n<a target=\"_blank\" href=\"/cmlparser/last/catalog\" class=\"btn btn-primary btn-sm\">catalog</a>\n<a target=\"_blank\" href=\"/cmlparser/last/tovars\" class=\"btn btn-primary btn-sm\">products</a>\n<a target=\"_blank\" href=\"/cmlparser/last/offers\" class=\"btn btn-primary btn-sm\">offers</a>\n| \n<a target=\"_blank\" href=\"/cmlparser/last/catalog.json\" class=\"btn btn-success btn-sm\">catalog.json</a>\n<a target=\"_blank\" href=\"/cmlparser/last/tovars.json\" class=\"btn btn-success btn-sm\">tovars.json</a>\n<a target=\"_blank\" href=\"/cmlparser/last/offers.json\" class=\"btn btn-success btn-sm\">offers.json</a>\n<br /><br />\n<h3>Список всех выгрузок</h3>"
           plugin_id: text_custom
       footer: {  }
       empty: {  }
