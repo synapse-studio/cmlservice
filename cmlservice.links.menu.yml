@@ -1,5 +1,16 @@
-cmlservice.settings:
-  title: 'CML service Settings'
-  parent: synapse.page
-  description: 'cmlservice Settings'
-  route_name: cmlservice.settings
+cmlservice.protocol:
+  title: 'CML Protocol Settings'
+  parent: system.admin_config_system
+  route_name: cmlservice.protocol
+
+cmlservice.mapping:
+  title: 'CML Mapping Settings'
+  parent: system.admin_config_system
+  route_name: cmlservice.mapping
+
+# Cml entity menu items definition
+cml.admin.structure.settings:
+  title: Cml entity settings
+  description: 'Configure Cml entity entities'
+  route_name: cml.settings
+  parent: system.admin_structure

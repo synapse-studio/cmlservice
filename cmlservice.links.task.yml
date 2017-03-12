@@ -1,0 +1,41 @@
+# Cml entity routing definition
+cml.settings_tab:
+  route_name: cml.settings
+  title: 'Settings'
+  base_route: cml.settings
+
+entity.cml.canonical:
+  route_name: entity.cml.canonical
+  base_route: entity.cml.canonical
+  title: 'View'
+
+entity.cml.edit_form:
+  route_name: entity.cml.edit_form
+  base_route: entity.cml.canonical
+  title: 'Edit'
+
+entity.cml.delete_form:
+  route_name:  entity.cml.delete_form
+  base_route:  entity.cml.canonical
+  title: Delete
+  weight: 10
+
+entity.cml.catalog:
+  route_name: cmlservice.catalog
+  base_route: entity.cml.canonical
+  title: 'Catalog'
+
+entity.cml.tovar:
+  route_name: cmlservice.tovars
+  base_route: entity.cml.canonical
+  title: 'Tovar'
+
+entity.cml.offers:
+  route_name: cmlservice.offers
+  base_route: entity.cml.canonical
+  title: 'Offers'
+
+entity.admin:
+  route_name: entity.cml.collection
+  title: CML
+  base_route: system.admin_content
