@@ -1,14 +1,42 @@
 cmlservice.cml:
   path: '/cmlservice/1c'
   defaults:
-    _controller: '\Drupal\cmlservice\Controller\Cml::cml'
+    _controller: '\Drupal\cmlservice\Protocol\Cml::cml'
     _title: 'CMl Import'
   requirements:
     _permission: 'access content'
-cmlservice.settings:
-  path: '/admin/config/synapse/cmlservice'
+cmlservice.protocol:
+  path: '/admin/config/synapse/cmlservice-protocol'
   defaults:
-    _form: '\Drupal\cmlservice\Form\Settings'
-    _title: 'CML Service Settings'
+    _form: '\Drupal\cmlservice\Form\SettingsProtocol'
+    _title: 'CML Protokol Settings'
   requirements:
     _permission: 'administer nodes'
+cmlservice.mapping:
+  path: '/admin/config/synapse/cmlservice-mapping'
+  defaults:
+    _form: '\Drupal\cmlservice\Form\SettingsMapping'
+    _title: 'CML Mapping Settings'
+  requirements:
+    _permission: 'administer nodes'
+cmlservice.catalog:
+  path: '/admin/structure/cml/{cml}/catalog'
+  defaults:
+    _controller: '\Drupal\cmlservice\Controller\Catalog::page'
+    _title: 'CMl Catalog'
+  requirements:
+    _permission: 'access content'
+cmlservice.tovars:
+  path: '/admin/structure/cml/{cml}/tovars'
+  defaults:
+    _controller: '\Drupal\cmlservice\Controller\Tovar::page'
+    _title: 'CMl Tovars'
+  requirements:
+    _permission: 'access content'
+cmlservice.offers:
+  path: '/admin/structure/cml/{cml}/offers'
+  defaults:
+    _controller: '\Drupal\cmlservice\Controller\Offers::page'
+    _title: 'CMl Offers'
+  requirements:
+    _permission: 'access content'

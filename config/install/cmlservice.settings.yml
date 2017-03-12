@@ -1,7 +1,0 @@
-auth: 0
-debug: 1
-auth-user: synapse-test
-auth-pass: synapse-1c-pass
-zip: 0
-images-path: cml-images
-file-limit: '0'
