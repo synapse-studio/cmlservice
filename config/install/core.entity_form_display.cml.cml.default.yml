@@ -1,3 +1,4 @@
+uuid: a6d35ffc-2113-442b-a628-0d77e3b78cb2
 langcode: ru
 status: true
 dependencies:
@@ -5,12 +6,15 @@ dependencies:
     - field.field.cml.cml.field_cml_date
     - field.field.cml.cml.field_cml_ip
     - field.field.cml.cml.field_cml_login
+    - field.field.cml.cml.field_cml_status
     - field.field.cml.cml.field_cml_type
     - field.field.cml.cml.field_cml_xml
   module:
     - cmlservice
     - datetime
     - file
+_core:
+  default_config_hash: Knhil4b63kVl-b93q30imYBQ4sE1n-hCi4VUME-BiYg
 id: cml.cml.default
 targetEntityType: cml
 bundle: cml
@@ -35,6 +39,11 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_cml_status:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
   field_cml_type:
     type: options_select
     weight: 1
@@ -42,7 +51,7 @@ content:
     third_party_settings: {  }
   field_cml_xml:
     type: file_generic
-    weight: 4
+    weight: 5
     settings:
       progress_indicator: throbber
     third_party_settings: {  }

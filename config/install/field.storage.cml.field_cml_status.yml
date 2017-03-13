@@ -1,0 +1,27 @@
+uuid: c237fb14-2af2-450d-beb9-04b35dbe30a3
+langcode: ru
+status: true
+dependencies:
+  module:
+    - cmlservice
+    - options
+id: cml.field_cml_status
+field_name: field_cml_status
+entity_type: cml
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: new
+      label: new
+    -
+      value: done
+      label: done
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
