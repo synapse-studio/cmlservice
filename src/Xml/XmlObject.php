@@ -46,6 +46,7 @@ class XmlObject {
     'ЗначенияСвойств'   => 'ЗначенияСвойства',
     'ХарактеристикиТовара' => 'ХарактеристикаТовара',
     'СтавкиНалогов'   => 'СтавкаНалога',
+    'Цены'   => 'Цена',
   ];
 
   /**
@@ -84,6 +85,9 @@ class XmlObject {
         $result = [];
         if (isset($this->productMaps[$key]) && $m = $this->productMaps[$key]) {
           $result = $this->arrayNormalize($field[$m]);
+          if ($key == 'ХарактеристикиТовара') {
+            $result = json_encode($result, JSON_UNESCAPED_UNICODE);
+          }
         }
         elseif ($key == 'Группы') {
           foreach ($this->arrayNormalize($field) as $group) {
