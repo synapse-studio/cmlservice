@@ -16,6 +16,7 @@ use Drupal\feeds\Result\ParserResult;
 use Drupal\feeds\StateInterface;
 use Drupal\Component\Transliteration\PhpTransliteration;
 use Drupal\cmlservice\Xml\TovarParcer;
+use Drupal\file\Entity\File;
 
 /**
  * Defines a CmlProductParser feed parser.
@@ -68,9 +69,7 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
       }
     }
 
-    if (FALSE) {
-      dsm($result);
-    }
+    dsm($result);
     return $result;
   }
 
@@ -79,17 +78,18 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
    */
   public function queryImages() {
     $query = \Drupal::entityQuery('file');
-    $query->condition('fid', '10', '>')
-      ->condition('uri', '%import_files%', 'LIKE')
-      ->range(0, 10);
+    $query->condition('uri', '%import_files%', 'LIKE');
     $result = $query->execute();
     $files = [];
     foreach ($result as $fid) {
       $file = File::load($fid);
+      $file->setPermanent();
+      $file->save();
       $uri = $file->getFileUri();
-      $image = str_replace('public://cml-files/img//', "", $uri);
-      $image = str_replace('public://cml-files/img/', "", $uri);
-      $files[$image] = $fid;
+      // Hack: /var/www/html/modules/contrib/feeds/src/Feeds/Target/Link.php
+      // case 'target_id': $values[$column] = (int) $value; break;!
+      $image = strstr($uri, 'import_files');
+      $files[$image] = ['target_id' => $fid];
     }
     return $files;
   }
