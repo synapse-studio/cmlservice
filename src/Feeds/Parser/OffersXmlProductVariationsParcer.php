@@ -37,6 +37,7 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
     $xml = $fetcher_result->getRaw();
     $raws = OffersParcer::parce($xml);
     $map = OffersParcer::map();
+    $k = 1;
     if ($raws) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();
@@ -44,12 +45,16 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
           $name = $trans->transliterate($map_key, '');
           $item->set($name, $raw[$name]);
         }
-        $result->addItem($item);
+        $k++;
+        if ($k < 5) {
+          $result->addItem($item);
+        }
+
       }
     }
+    dsm($result);
+    if (FALSE) {
 
-    if (TRUE) {
-      dsm($result);
       $result = new ParserResult();
     }
     return $result;

@@ -35,12 +35,11 @@ class ImportXmlCatalogParcer extends PluginBase implements ParserInterface {
     $result = new ParserResult();
     $xml = $fetcher_result->getRaw();
     $raws  = CatalogParcer::parce($xml);
-
     foreach ($raws as $key => $raw) {
       $item = new DynamicItem();
       $item->set('uuid', $raw['id']);
       $item->set('name', $raw['name']);
-      $item->set('parent', [trim($raw['parent'])]);
+      $item->set('parent_uid', [trim($raw['parent'])]);
       $item->set('term_weight', $raw['term_weight']);
       $result->addItem($item);
     }
@@ -55,7 +54,7 @@ class ImportXmlCatalogParcer extends PluginBase implements ParserInterface {
       'uuid' => ['label' => $this->t('uuid')],
       'name' => ['label' => $this->t('Name')],
       'term_weight' => ['label' => $this->t('Term weight')],
-      'parent' => ['label' => $this->t('Parent')],
+      'parent_uid' => ['label' => $this->t('Parent_uid')],
     ];
   }
 
