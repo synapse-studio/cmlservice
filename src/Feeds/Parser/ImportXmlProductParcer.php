@@ -48,7 +48,7 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
       }
     }
 
-    if (TRUE) {
+    if (FALSE) {
       dsm($result);
       $result = new ParserResult();
     }
