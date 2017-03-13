@@ -6,6 +6,7 @@ dependencies:
     - field.field.cml.cml.field_cml_date
     - field.field.cml.cml.field_cml_ip
     - field.field.cml.cml.field_cml_login
+    - field.field.cml.cml.field_cml_status
     - field.field.cml.cml.field_cml_type
     - field.field.cml.cml.field_cml_xml
   module:
@@ -14,7 +15,7 @@ dependencies:
     - file
     - options
 _core:
-  default_config_hash: cjp_KAoSRhPlaI55OX7mnez1GY4XsqMvO9jdYW_Qffg
+  default_config_hash: P3wr7uR-KAInKdHbsTw2dOPWoVFLNsTNypZn7gScxfM
 id: cml.cml.default
 targetEntityType: cml
 bundle: cml
@@ -42,6 +43,12 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
+  field_cml_status:
+    weight: 4
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
   field_cml_type:
     type: list_default
     weight: 2
@@ -50,7 +57,7 @@ content:
     third_party_settings: {  }
   field_cml_xml:
     type: file_default
-    weight: 4
+    weight: 5
     label: above
     settings: {  }
     third_party_settings: {  }
