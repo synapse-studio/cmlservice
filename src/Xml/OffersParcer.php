@@ -62,7 +62,6 @@ class OffersParcer extends ControllerBase {
 
       }
     }
-
     return $result;
   }
 

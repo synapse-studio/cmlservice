@@ -31,7 +31,7 @@ class CmlFile extends ControllerBase {
             $xml = TRUE;
           }
           else {
-            $filepath = 'public://cml-files/img/';
+            $filepath = 'public://cml-files/img';
             Cml::debug(__CLASS__, 'GET:' . $filename);
             $path = explode('/', $filename);
             $filename = array_pop($path);
