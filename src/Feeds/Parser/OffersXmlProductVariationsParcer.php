@@ -35,9 +35,8 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
     $result = new ParserResult();
     $trans  = new PhpTransliteration();
     $xml = $fetcher_result->getRaw();
-    $raws = OffersParcer::parce($xml, 'public://cml-files/catalog/9/offers.xml');
+    $raws = OffersParcer::parce($xml);
     $map = OffersParcer::map();
-    $k = 1;
     if ($raws) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();
@@ -45,9 +44,11 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
           $name = $trans->transliterate($map_key, '');
           $item->set($name, $raw[$name]);
         }
+        $item->set('title', rand());
         $result->addItem($item);
       }
     }
+    dsm($result);
     return $result;
   }
 
