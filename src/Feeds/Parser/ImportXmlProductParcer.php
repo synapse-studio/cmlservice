@@ -108,7 +108,7 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
         // Hack: /var/www/html/modules/contrib/feeds/src/Feeds/Target/Link.php
         // case 'target_id': $values[$column] = (int) $value; break;!
         $image = strstr($uri, 'import_files');
-        $files[$image] = ['target_id' => $fid];
+        $files[$image] = ['id' => $fid];
       }
     }
     return $files;
@@ -122,9 +122,6 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     if ($flag) {
       $entity_type = 'commerce_product_variation';
       $query = \Drupal::entityQuery($entity_type);
-      if (FALSE) {
-        $query->range(0, 10);
-      }
       $ids = $query->execute();
       $offers = entity_load_multiple($entity_type, $ids);
 
