@@ -5,6 +5,7 @@ namespace Drupal\cmlservice\Xml;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\Component\Transliteration\PhpTransliteration;
+use Drupal\cmlservice\Xml\OffersParcer;
 
 /**
  * Controller routines for page example routes.
@@ -23,7 +24,6 @@ class OffersParcer extends ControllerBase {
     $xmlObj->parseXmlString($xml);
     $xmlObj->get('offers', 'offer');
     $offers = $xmlObj->xmlfind;
-
     $result = [];
     if ($offers) {
       if ($config->get('hash-skip') && $uri) {
