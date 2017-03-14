@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * cmlservice.module
+ */
+
+/**
+ * Hook_entity_presave.
+ */
+function cmlservice_entity_presave($entity) {
+  if ($entity->getEntityTypeId() == 'taxonomy_term') {
+    $vid = $entity->getVocabularyId();
+    if ($vid == 'catalog') {
+      $parent_uid = $entity->description->value;
+      if (!empty($parent_uid)) {
+        $query = \Drupal::entityQuery('taxonomy_term');
+        $query->condition('vid', 'catalog')
+          ->condition('feeds_item.guid', $parent_uid, '=')
+          ->sort('tid', 'DESC')
+          ->range(0, 10);
+        $result = $query->execute();
+        $result = array_shift($result);
+
+        if (!empty($result)) {
+          $entity->set('parent', $result);
+        }
+      }
+    }
+  }
+}
