@@ -42,7 +42,7 @@ class XmlCustomParcer extends PluginBase implements ParserInterface {
     $xmlObj->parseXmlString($xml);
     $xmlObj->find($feed_config['query']);
     $raws = $xmlObj->xmlfind;
-    if ($raws) {
+    if ($raws && FALSE) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();
         $item->set('id', $raw['Ид']);
@@ -69,7 +69,8 @@ class XmlCustomParcer extends PluginBase implements ParserInterface {
    */
   public function defaultFeedConfiguration() {
     return [
-      'query' => $this->configuration['query'],
+      'source' => '',
+      'limit' => '',
     ];
   }
 
