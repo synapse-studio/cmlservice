@@ -50,9 +50,6 @@ class OffersParcer extends ControllerBase {
             $offer1c['Характеристики'] = $products[$id];
           }
         }
-        if (isset($result[$parent])) {
-          //unset($result[$parent]);
-        }
         $offer = [];
         foreach ($map as $map_key => $map_info) {
           $name = $trans->transliterate($map_key, '');

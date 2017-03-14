@@ -88,6 +88,9 @@ class XmlObject {
           if ($key == 'ХарактеристикиТовара') {
             $result = json_encode($result, JSON_UNESCAPED_UNICODE);
           }
+          if ($key == 'Цены') {
+            $result = [array_shift($result)];
+          }
         }
         elseif ($key == 'Группы') {
           foreach ($this->arrayNormalize($field) as $group) {
