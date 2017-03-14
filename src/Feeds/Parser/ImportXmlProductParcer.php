@@ -40,16 +40,10 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     $result = new ParserResult();
     $trans  = new PhpTransliteration();
     $feed_config = $feed->getConfigurationFor($this);
-    $offers = [];
-    if ($feed_config['offers']) {
-      $offers = $this->queryOffers();
-      dsm($offers);
-    }
-    $images = [];
-    if ($feed_config['images']) {
-      $images = $this->queryImages();
-      dsm($images);
-    }
+
+    $offers = $this->queryOffers($feed_config['offers']);
+    $images = $this->queryImages($feed_config['images']);
+
     $xml = $fetcher_result->getRaw();
     $raws = TovarParcer::parce($xml);
     $map = TovarParcer::map();
@@ -60,36 +54,62 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
           $name = $trans->transliterate($map_key, '');
           $item->set($name, $raw[$name]);
         }
-        $image = NULL;
-        if (isset($raw['Kartinka']) && isset($images[$raw['Kartinka']])) {
-          $image = $images[$raw['Kartinka']];
-        }
-        $item->set('image', $image);
+        $item->set('image', $this->hasImage($raw, $images));
+        $item->set('offers', $this->hasOffer($raw, $offers));
         $result->addItem($item);
       }
     }
 
-    dsm($result);
     return $result;
+  }
+
+  /**
+   * HasImage.
+   */
+  public function hasOffer($raw, $offers) {
+    $offer = NULL;
+    if (!empty($offers) && isset($raw['Id'])) {
+      $id1c = $raw['Id'];
+      if (isset($offers[$id1c])) {
+        $offer = $offers[$id1c];
+      }
+    }
+    return $offer;
+  }
+
+  /**
+   * HasImage.
+   */
+  public function hasImage($raw, $images) {
+    $image = NULL;
+    if (!empty($images) && isset($raw['Kartinka'])) {
+      $url1c = $raw['Kartinka'];
+      if (isset($images[$url1c])) {
+        $image = $images[$url1c];
+      }
+    }
+    return $image;
   }
 
   /**
    * Find Images.
    */
-  public function queryImages() {
-    $query = \Drupal::entityQuery('file');
-    $query->condition('uri', '%import_files%', 'LIKE');
-    $result = $query->execute();
+  public function queryImages($flag) {
     $files = [];
-    foreach ($result as $fid) {
-      $file = File::load($fid);
-      $file->setPermanent();
-      $file->save();
-      $uri = $file->getFileUri();
-      // Hack: /var/www/html/modules/contrib/feeds/src/Feeds/Target/Link.php
-      // case 'target_id': $values[$column] = (int) $value; break;!
-      $image = strstr($uri, 'import_files');
-      $files[$image] = ['target_id' => $fid];
+    if ($flag) {
+      $query = \Drupal::entityQuery('file');
+      $query->condition('uri', '%import_files%', 'LIKE');
+      $result = $query->execute();
+      foreach ($result as $fid) {
+        $file = File::load($fid);
+        $file->setPermanent();
+        $file->save();
+        $uri = $file->getFileUri();
+        // Hack: /var/www/html/modules/contrib/feeds/src/Feeds/Target/Link.php
+        // case 'target_id': $values[$column] = (int) $value; break;!
+        $image = strstr($uri, 'import_files');
+        $files[$image] = ['target_id' => $fid];
+      }
     }
     return $files;
   }
@@ -97,12 +117,26 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
   /**
    * Find Offers.
    */
-  public function queryOffers() {
-    $query = \Drupal::entityQuery('cml');
-    $query->condition('field_cml_xml', 'NULL', '!=')
-      ->sort('field_cml_date', 'DESC')
-      ->range(0, 1);
-    $result = $query->execute();
+  public function queryOffers($flag) {
+    $result = [];
+    if ($flag) {
+      $entity_type = 'commerce_product_variation';
+      $query = \Drupal::entityQuery($entity_type);
+      if (FALSE) {
+        $query->range(0, 10);
+      }
+      $ids = $query->execute();
+      $offers = entity_load_multiple($entity_type, $ids);
+
+      foreach ($offers as $offer) {
+        $id = $offer->id();
+        $sku = $offer->sku->value;
+        if ($sku && strlen($sku) > 20) {
+          $key = strstr($sku . "#", "#", TRUE);
+          $result[$key][] = $sku;
+        }
+      }
+    }
     return $result;
   }
 
