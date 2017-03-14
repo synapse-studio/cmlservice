@@ -67,7 +67,7 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
    * HasImage.
    */
   public function hasOffer($raw, $offers) {
-    $offer = NULL;
+    $offer = [];
     if (!empty($offers) && isset($raw['Id'])) {
       $id1c = $raw['Id'];
       if (isset($offers[$id1c])) {
@@ -81,7 +81,7 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
    * HasImage.
    */
   public function hasImage($raw, $images) {
-    $image = NULL;
+    $image = [];
     if (!empty($images) && isset($raw['Kartinka'])) {
       $url1c = $raw['Kartinka'];
       if (isset($images[$url1c])) {
