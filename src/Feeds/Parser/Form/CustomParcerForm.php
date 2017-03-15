@@ -29,6 +29,12 @@ class CustomParcerForm extends ExternalPluginFormBase implements ContainerInject
       '#default_value' => $this->plugin->getConfiguration('query'),
       '#description' => 'Example: "Классификатор/Бренды/Бренд" or "Классификатор/Категории"',
     ];
+    $form['limit'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Limit $rows'),
+      '#default_value' => $this->plugin->getConfiguration('limit'),
+      '#description' => 'Limit $rows to debug',
+    ];
     return $form;
   }
 

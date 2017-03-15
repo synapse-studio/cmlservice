@@ -47,6 +47,12 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     $xml = $fetcher_result->getRaw();
     $raws = TovarParcer::parce($xml);
     $map = TovarParcer::map();
+
+    if ($feed_config['limit']) {
+      $raws = array_slice($raws, 0, $feed_config['limit']);
+      dsm($raws);
+    }
+
     if ($raws) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();
@@ -163,6 +169,7 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     return [
       'offers' => $this->configuration['offers'],
       'images' => $this->configuration['images'],
+      'limit'  => $this->configuration['limit'],
     ];
   }
 
@@ -173,6 +180,7 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     return [
       'offers' => FALSE,
       'images' => FALSE,
+      'limit' => FALSE,
     ];
   }
 

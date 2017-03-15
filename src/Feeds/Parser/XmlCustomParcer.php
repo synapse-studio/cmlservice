@@ -25,7 +25,6 @@ use Drupal\cmlservice\Xml\XmlObject;
  *   description = @Translation("parce xml string"),
  *   form = {
  *     "configuration" = "Drupal\cmlservice\Feeds\Parser\Form\CustomParcerForm",
- *     "feed" = "Drupal\cmlservice\Feeds\Parser\Form\CustomParcerFeedForm",
  *   },
  * )
  */
@@ -42,7 +41,13 @@ class XmlCustomParcer extends PluginBase implements ParserInterface {
     $xmlObj->parseXmlString($xml);
     $xmlObj->find($feed_config['query']);
     $raws = $xmlObj->xmlfind;
-    if ($raws && FALSE) {
+
+    if ($feed_config['limit']) {
+      $raws = array_slice($raws, 0, $feed_config['limit']);
+      dsm($raws);
+    }
+
+    if ($raws) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();
         $item->set('id', $raw['Ид']);
@@ -50,6 +55,7 @@ class XmlCustomParcer extends PluginBase implements ParserInterface {
         $result->addItem($item);
       }
     }
+
     return $result;
   }
 
@@ -69,8 +75,8 @@ class XmlCustomParcer extends PluginBase implements ParserInterface {
    */
   public function defaultFeedConfiguration() {
     return [
-      'source' => '',
-      'limit' => '',
+      'query' => $this->configuration['query'],
+      'limit' => $this->configuration['limit'],
     ];
   }
 
@@ -80,6 +86,7 @@ class XmlCustomParcer extends PluginBase implements ParserInterface {
   public function defaultConfiguration() {
     return [
       'query' => '',
+      'limit' => '',
     ];
   }
 
