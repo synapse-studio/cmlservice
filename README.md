@@ -27,6 +27,7 @@ composer require "drupal/commerce 2.x-dev" && \
 composer update && \
 drush en -y commerce_product && \
 git clone https://github.com/synapse-studio/tovar /var/www/html/modules/custom/features/tovar && \
+git clone https://github.com/synapse-studio/cmlservice /var/www/html/modules/custom/cmlservice && \
 git clone -b 8.x-3.x --single-branch https://github.com/drupalprojects/feeds /var/www/html/modules/contrib/feeds && \
 cp /var/www/html/modules/custom/cmlservice/config/tpl/field.field.node.tovar.field_tovar_variation.yml /var/www/html/modules/custom/features/tovar/config/install && \
 cp /var/www/html/modules/custom/cmlservice/config/tpl/field.storage.node.field_tovar_variation.yml /var/www/html/modules/custom/features/tovar/config/install && \
