@@ -22,8 +22,9 @@
 
 
 cd /var/www/html && \
-composer update && \
 composer config repositories.drupal composer https://packages.drupal.org/8 && \
+composer require "drupal/commerce 2.x-dev" && \
+composer update && \
 drush en -y commerce_product && \
 git clone https://github.com/synapse-studio/tovar /var/www/html/modules/custom/features/tovar && \
 git clone -b 8.x-3.x --single-branch https://github.com/drupalprojects/feeds /var/www/html/modules/contrib/feeds && \
@@ -33,6 +34,8 @@ drush en -y tovar && \
 cp /var/www/html/modules/custom/cmlservice/feeds.patch.txt /var/www/html/modules/contrib/feeds && \
 cd /var/www/html/modules/contrib/feeds && \
 patch -p1 < feeds.patch.txt && \
-drush en -y feeds
+drush en -y feeds && \
+drush en -y cmlservice
+
 
 
