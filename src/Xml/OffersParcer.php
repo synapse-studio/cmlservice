@@ -5,7 +5,6 @@ namespace Drupal\cmlservice\Xml;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\Component\Transliteration\PhpTransliteration;
-use Drupal\cmlservice\Xml\OffersParcer;
 
 /**
  * Controller routines for page example routes.
@@ -15,7 +14,7 @@ class OffersParcer extends ControllerBase {
   /**
    * Parce.
    */
-  public static function parce($xml, $uri = FALSE) {
+  public static function parce($xml) {
     $config = \Drupal::config('cmlservice.mapsettings');
     $trans = new PhpTransliteration();
     $map = self::map();
@@ -23,38 +22,19 @@ class OffersParcer extends ControllerBase {
     $xmlObj = new XmlObject();
     $xmlObj->parseXmlString($xml);
     $xmlObj->get('offers', 'offer');
+    // Данные находятся в $xmlObj->xmlfind, изменим их в отдельном файле.
+    OffersHack::hack($xmlObj);
     $offers = $xmlObj->xmlfind;
+
     $result = [];
     if ($offers) {
-      if ($config->get('hash-skip') && $uri) {
-        $filepath = drupal_realpath(str_replace('offers', 'import', $uri));
-        $xmlObj2 = new XmlObject();
-        $xmlObj2->parseXmlFile($filepath);
-        $xmlObj2->parseXmlString($xmlObj2->xmlString);
-        $xmlObj2->get('import', 'product');
-        $products = [];
-        foreach ($xmlObj2->xmlfind as $key => $product) {
-          $id = $product['Ид'];
-          $key = 'ХарактеристикиТовара';
-          $char = $xmlObj2->prepare($product, $key, ['type' => []]);
-          if ($char) {
-            $products[$id] = $char;
-          }
-        }
-      }
       foreach ($offers as $offer1c) {
-        $id = $offer1c['Ид'];
-        $parent = strstr($id, "#", TRUE);
-        if ($config->get('hash-skip') && $uri) {
-          if (isset($products[$id]) && $products[$id]) {
-            $offer1c['Характеристики'] = $products[$id];
-          }
-        }
         $offer = [];
         foreach ($map as $map_key => $map_info) {
           $name = $trans->transliterate($map_key, '');
           $offer[$name] = $xmlObj->prepare($offer1c, $map_key, $map_info);
         }
+        $id = $offer1c['Ид'];
         $result[$id] = $offer;
 
       }
