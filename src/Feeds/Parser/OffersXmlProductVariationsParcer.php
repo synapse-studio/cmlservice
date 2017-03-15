@@ -46,7 +46,6 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
       $raws = array_slice($raws, 0, $feed_config['limit']);
       dsm($raws);
     }
-
     if ($raws) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();

@@ -30,23 +30,23 @@ class CommercePrice extends FieldTargetBase {
    */
   protected function prepareValue($delta, array &$values) {
     if (isset($values['number']) && isset($values['number']['ЦенаЗаЕдиницу'])) {
-      $values['number'] = trim($values['number']['ЦенаЗаЕдиницу']);
       $storage = \Drupal::entityManager()->getStorage('commerce_currency');
       $codes = array_keys($storage->loadMultiple());
-      $ptice = trim($values['number']['ЦенаЗаЕдиницу']);
+      $price = trim($values['number']['ЦенаЗаЕдиницу']);
       $code = $values['number']['Валюта'];
       if (!in_array($code, $codes)) {
         $code = array_shift($codes);
       }
-      $values['currency_code'] = 'RUB';
       $values = [
-        'number' => $ptice,
+        'number' => $price,
         'currency_code' => $code,
       ];
     }
     else {
-      $values['number'] = FALSE;
-      $values['currency_code'] = FALSE;
+      $values = [
+        'number' => FALSE,
+        'currency_code' => FALSE,
+      ];
     }
   }
 

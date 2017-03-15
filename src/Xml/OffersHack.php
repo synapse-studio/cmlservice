@@ -18,7 +18,7 @@ class OffersHack extends ControllerBase {
     $config = \Drupal::config('cmlservice.mapsettings');
 
     // Ищем import.xml в последней выгрузке.
-    if ($config->get('hash-skip') && FALSE) {
+    if ($config->get('hash-skip')) {
       $data = FALSE;
       $products = FALSE;
       $xmlObjImport = new XmlObject();
