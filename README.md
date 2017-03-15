@@ -36,7 +36,7 @@ cp /var/www/html/modules/custom/cmlservice/feeds.patch.txt /var/www/html/modules
 cd /var/www/html/modules/contrib/feeds && \
 patch -p1 < feeds.patch.txt && \
 drush en -y feeds && \
-drush en -y cmlservice
-
+drush en -y cmlservice && \
+drush sql-query --file=/var/www/html/modules/custom/cmlservice/config/tpl/feeds.sql
 
 
