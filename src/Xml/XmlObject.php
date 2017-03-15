@@ -85,9 +85,6 @@ class XmlObject {
         $result = [];
         if (isset($this->productMaps[$key]) && $m = $this->productMaps[$key]) {
           $result = $this->arrayNormalize($field[$m]);
-          if ($key == 'ХарактеристикиТовара') {
-            $result = json_encode($result, JSON_UNESCAPED_UNICODE);
-          }
           if ($key == 'Цены') {
             $result = [array_shift($result)];
           }

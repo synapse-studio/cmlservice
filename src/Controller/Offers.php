@@ -3,8 +3,6 @@
 namespace Drupal\cmlservice\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\Yaml\Yaml;
-use Drupal\Component\Transliteration\PhpTransliteration;
 use Drupal\cmlservice\Xml\XmlObject;
 use Drupal\cmlservice\Xml\OffersParcer;
 
@@ -30,7 +28,7 @@ class Offers extends ControllerBase {
         if ($filename == 'offers.xml') {
           $xmlObj = new XmlObject();
           $xmlObj->parseXmlFile($filepath);
-          $data = OffersParcer::parce($xmlObj->xmlString, $file->getFileUri());
+          $data = OffersParcer::parce($xmlObj->xmlString);
         }
       }
     }
