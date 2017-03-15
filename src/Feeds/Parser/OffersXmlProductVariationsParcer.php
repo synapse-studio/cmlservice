@@ -23,7 +23,10 @@ use Drupal\cmlservice\Xml\OffersParcer;
  * @FeedsParser(
  *   id = "OffersXmlProductVariationsParcer",
  *   title = @Translation("CmlProductVariations"),
- *   description = @Translation("offers.xml to product variations")
+ *   description = @Translation("offers.xml to product variations"),
+ *   form = {
+ *     "configuration" = "Drupal\cmlservice\Feeds\Parser\Form\VariationsParcerForm",
+ *   },
  * )
  */
 class OffersXmlProductVariationsParcer extends PluginBase implements ParserInterface {
@@ -33,10 +36,17 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
    */
   public function parse(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
     $result = new ParserResult();
+    $feed_config = $feed->getConfigurationFor($this);
     $trans  = new PhpTransliteration();
     $xml = $fetcher_result->getRaw();
     $raws = OffersParcer::parce($xml);
     $map = OffersParcer::map();
+
+    if ($feed_config['limit']) {
+      $raws = array_slice($raws, 0, $feed_config['limit']);
+      dsm($raws);
+    }
+
     if ($raws) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();
@@ -44,11 +54,9 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
           $name = $trans->transliterate($map_key, '');
           $item->set($name, $raw[$name]);
         }
-        $item->set('title', rand());
         $result->addItem($item);
       }
     }
-    dsm($result);
     return $result;
   }
 
@@ -67,6 +75,24 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
       $result[$name] = ['label' => $map_key];
     }
     return $result;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultFeedConfiguration() {
+    return [
+      'limit' => $this->configuration['limit'],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return [
+      'limit' => '',
+    ];
   }
 
 }

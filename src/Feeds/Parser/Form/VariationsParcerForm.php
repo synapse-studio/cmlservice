@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * The configuration form for the CSV parser.
  */
-class ProductParcerForm extends ExternalPluginFormBase implements ContainerInjectionInterface {
+class VariationsParcerForm extends ExternalPluginFormBase implements ContainerInjectionInterface {
 
   /**
    * {@inheritdoc}
@@ -23,15 +23,11 @@ class ProductParcerForm extends ExternalPluginFormBase implements ContainerInjec
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form['offers'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Attach offers'),
-      '#default_value' => $this->plugin->getConfiguration('offers'),
-    ];
-    $form['images'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Attach images'),
-      '#default_value' => $this->plugin->getConfiguration('images'),
+    $form['limit'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Limit $rows'),
+      '#default_value' => $this->plugin->getConfiguration('limit'),
+      '#description' => 'Limit $rows to debug',
     ];
     return $form;
   }
