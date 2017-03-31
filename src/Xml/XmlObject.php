@@ -95,7 +95,12 @@ class XmlObject {
           }
         }
         else {
-          $result = $this->arrayNormalize($field);
+          if (isset($map['type']['inside'])) {
+            $result = $this->arrayNormalize($field[$map['type']['inside']]);
+          }
+          else {
+            $result = $this->arrayNormalize($field);
+          }
         }
       }
       elseif ($map['type'] == 'attr') {
