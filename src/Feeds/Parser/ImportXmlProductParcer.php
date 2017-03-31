@@ -41,9 +41,6 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     $trans  = new PhpTransliteration();
     $feed_config = $feed->getConfigurationFor($this);
 
-    $offers = $this->queryOffers($feed_config['offers']);
-    $images = $this->queryImages($feed_config['images']);
-
     $xml = $fetcher_result->getRaw();
     $raws = TovarParcer::parce($xml);
     $map = TovarParcer::map();
@@ -60,8 +57,8 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
           $name = $trans->transliterate($map_key, '');
           $item->set($name, $raw[$name]);
         }
-        $item->set('image', $this->hasImage($raw, $images));
-        $item->set('offers', $this->hasOffer($raw, $offers));
+        $item->set('image', $this->selectImage($raw));
+        $item->set('offers', $this->selectOffer($raw));
         $result->addItem($item);
       }
     }
@@ -82,6 +79,28 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     }
     return $offer;
   }
+  
+  /**
+   * Find offer in table.
+   */
+  public function selectOffer($raw) {
+    $result = [];
+    if (isset($raw['Id'])) {
+      $id1c = $raw['Id'];
+      $entity_type = 'commerce_product_variation';
+      $query = \Drupal::entityQuery($entity_type);
+      $query->condition('sku', $id1c . '%', 'LIKE');
+      $ids = $query->execute();
+      $offers = entity_load_multiple($entity_type, $ids);
+      foreach ($offers as $offer) {
+        $sku = $offer->sku->value;
+        if ($sku && strlen($sku) > 20) {
+          $result[] = $sku;
+        }
+      }
+    }
+    return $result;
+  }
 
   /**
    * HasImage.
@@ -95,6 +114,22 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
       }
     }
     return $image;
+  }
+  
+  /**
+   * Find image in table.
+   */
+  public function selectImage($raw) {
+    $result = [];
+    if (isset($raw['Kartinka'])) {
+      $query = \Drupal::entityQuery('file');
+      $query->condition('uri', '%' . $raw['Kartinka'] . '%', 'LIKE');
+      $query->sort('created', 'DESC');
+      $fleIds = $query->execute();
+      $fid = array_shift($fleIds);
+      $result['id'] = $fid;
+    }
+    return $result;
   }
 
   /**
