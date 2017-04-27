@@ -64,7 +64,13 @@ class CmlImport extends ControllerBase {
    */
   public static function feedCronRun($id, $created) {
     $feed = Feed::load($id);
-    if ($feed->getImportedTime() > $created) {
+    if (isset($feed->field_feeds_import_offset->value)) {
+      $offset = $feed->field_feeds_import_offset->value > 0 ? TRUE : FALSE;
+    }
+    else {
+      $offset = FALSE;
+    }
+    if (($feed->getImportedTime() > $created) && !$offset) {
       return 'imported';
     }
     if (!$feed->isLocked()) {
