@@ -112,6 +112,9 @@ class XmlObject {
             if (count($result) == count($buffer)) {
               $result = $buffer;
             }
+            else {
+              $result = NULL;
+            }
           }
           // Преобразуем в json.
           if (isset($map['type']['json']) && $jsonStatement = $map['type']['json']) {
