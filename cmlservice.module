@@ -36,6 +36,9 @@ function cmlservice_entity_presave($entity) {
 function cmlservice_cron() {
   $start = time();
   $lastRun = \Drupal::state()->get('cmlservice.cron_last_run');
+  if (!isset($lastRun)) {
+    $lastRun = strtotime('now - 1 month');
+  }
   $runToday = format_date($start, 'custom', 'Ymd') == format_date($lastRun, 'custom', 'Ymd');
   if (!$runToday) {
     $operations = [];
