@@ -127,23 +127,24 @@ class CmlCheckAuth extends ControllerBase {
     $config = \Drupal::config('cmlservice.settings');
     if ($config->get('auth')) {
       $authorized = FALSE;
-      if (TRUE || isset($_GET['Authorization'])) {
-        $auth = self::baseAuthUser();
-        if ($user) {
-          $config_name = $config->get('user-name');
-          $config_pass = $config->get('user-pass');
-          if (($auth['name'] == $config_name) & ($auth['pass'] == $config_pass)) {
-            $authorized = $auth_name;
-          }
-          else {
-            Cml::debug(__FUNCTION__,
-                t('@login:@pass - wrong login pair', array('@login' => $auth['name'], '@pass' => $auth['pass'])));
-            Cml::debug(__FUNCTION__,
-                t("base authorized :\nget = @get\npost = @post", array('@get' => $get, '@post' => $post)));
-          }
+      $auth = self::baseAuthUser();
+      if ($auth) {
+        $config_name = $config->get('auth-user');
+        $config_pass = $config->get('auth-pass');
+        if (($auth['name'] == $config_name) & ($auth['pass'] == $config_pass)) {
+          $authorized = $auth['name'];
+        }
+        else {
+          Cml::debug(__FUNCTION__,
+              t('@login:@pass - wrong login pair', array('@login' => $auth['name'], '@pass' => $auth['pass'])));
+          Cml::debug(__FUNCTION__,
+              t("base authorized :\nget = @get\npost = @post", array('@get' => $get, '@post' => $post)));
         }
       }
       return $authorized;
+    }
+    else {
+      return TRUE;
     }
   }
 
