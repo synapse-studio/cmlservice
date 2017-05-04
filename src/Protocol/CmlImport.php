@@ -28,11 +28,6 @@ class CmlImport extends ControllerBase {
         if (isset($feedsOrder)) {
           return self::processData($feedsOrder, array_shift($result));
         }
-        else {
-          $cml = \Drupal::entityManager()->getStorage('cml')->load(array_shift($result));
-          $cml->field_cml_status = 'done';
-          $cml->save();
-        }
       }
       return 'success';
     }
