@@ -15,20 +15,33 @@ class CmlImport extends ControllerBase {
    * Main.
    */
   public static function main() {
-    $query = \Drupal::entityQuery('cml');
-    $query->condition('field_cml_xml', 'NULL', '!=')
-      ->condition('field_cml_status', 'done', '!=')
-      ->sort('field_cml_date', 'ASC')
-      ->range(0, 1);
-    $result = $query->execute();
-    if (count($result)) {
-      $config = \Drupal::config('cmlservice.settings');
-      $feedsOrder = Yaml::parse($config->get('feeds-order'));
-      if (isset($feedsOrder)) {
-        return self::processData($feedsOrder, array_shift($result));
+    if (CmlCheckAuth::auth()) {
+      $query = \Drupal::entityQuery('cml');
+      $query->condition('field_cml_xml', 'NULL', '!=')
+        ->condition('field_cml_status', 'done', '!=')
+        ->sort('field_cml_date', 'ASC')
+        ->range(0, 1);
+      $result = $query->execute();
+      if (count($result)) {
+        $config = \Drupal::config('cmlservice.settings');
+        $feedsOrder = Yaml::parse($config->get('feeds-order'));
+        if (isset($feedsOrder)) {
+          return self::processData($feedsOrder, array_shift($result));
+        }
+        else {
+          $cml = \Drupal::entityManager()->getStorage('cml')->load(array_shift($result));
+          $cml->field_cml_status = 'done';
+          $cml->save();
+        }
       }
+      return 'success';
     }
-    return 'success';
+    else {
+      $result .= "failure\n";
+      $result .= "auth error\n";
+      Cml::debug(__CLASS__, "Ошибка авторизации. Base.");
+      return $result;
+    }
   }
   
   /**
