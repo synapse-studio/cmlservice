@@ -29,3 +29,50 @@ function cmlservice_entity_presave($entity) {
     }
   }
 }
+
+/**
+ * Дергает cron очистки старых выгрузок.
+ */
+function cmlservice_cron() {
+  $start = time();
+  $lastRun = \Drupal::state()->get('cmlservice.cron_last_run');
+  $runToday = format_date($start, 'custom', 'Ymd') == format_date($lastRun, 'custom', 'Ymd');
+  if (!$runToday) {
+    $operations = [];
+    $searchCatalog = GetLastCml::findOldCatalog();
+    $emptyCml = GetLastCml::findEmptyCml();
+    $operations = array_merge($operations, $searchCatalog, $emptyCml);
+    $batch = [
+      'title' => t('Delete cml'),
+      'operations' => $operations,
+      'finished' => 'cmlservice_delete_old_cml_callback',
+      'file' => drupal_get_path('module', 'cmlservice') . '/cmlservice.module',
+    ];
+
+    batch_set($batch);
+    $batch = & batch_get();
+    $batch['progressive'] = FALSE;
+    batch_process();
+  }
+}
+
+/**
+ * Задача для очереди.
+ */
+function cmlservice_delete_old_cml($cmlId) {
+  $cml = \Drupal::entityManager()->getStorage('cml')->load($cmlId);
+  if (isset($cml)) {
+    $created = strtotime($cml->field_cml_date->value);
+    $month = strtotime('now - 1 month');
+    if ($created < $month) {
+      $cml->delete();
+    }
+  }
+}
+
+/**
+ * Done.
+ */
+function cmlservice_delete_old_cml_callback() {
+  \Drupal::state()->set('cmlservice.cron_last_run', time());
+}
