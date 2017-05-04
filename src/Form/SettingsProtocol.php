@@ -107,6 +107,15 @@ class SettingsProtocol extends ConfigFormBase {
         (last): {feedId: false, next: (done status)}
       ',
     ];
+    $form['cml']['live_long'] = [
+      '#title' => $this->t('Live long'),
+      '#default_value' => $config->get('live-long', 'now - 1 month'),
+      '#description' => 'http://php.net/manual/ru/function.strtotime.php',
+      '#maxlength' => 20,
+      '#required' => FALSE,
+      '#size' => 15,
+      '#type' => 'textfield',
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -132,6 +141,7 @@ class SettingsProtocol extends ConfigFormBase {
       ->set('images-path', $form_state->getValue('images_path'))
       ->set('file-limit', $form_state->getValue('file_limit'))
       ->set('feeds-order', $form_state->getValue('feeds_order'))
+      ->set('live-long', $form_state->getValue('live_long'))
       ->save();
   }
 
