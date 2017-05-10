@@ -1,0 +1,276 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update hooks.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function cmlservice_install() {
+  $catalogData = make_data_for_catalog_entity();
+  $catalog = \Drupal::entityManager()->getStorage('feeds_feed_type')->create($catalogData);
+  $catalog->save();
+  $offerData = make_data_for_offer_entity();
+  $offer = \Drupal::entityManager()->getStorage('feeds_feed_type')->create($offerData);
+  $offer->save();
+  $tovarData = make_data_for_tovar_entity();
+  $tovar = \Drupal::entityManager()->getStorage('feeds_feed_type')->create($tovarData);
+  $tovar->save();
+}
+
+/**
+ * Make data for tovar feed.
+ */
+function make_data_for_tovar_entity() {
+  // Main settings.
+  $data = [
+    'id' => 'tovar',
+    'label' => 'Товар',
+    'description' => '',
+    'import_period' => -1,
+    'fetcher' => 'commerceml',
+    'parser' => 'ImportXmlProductParcer',
+    'processor' => 'entity:node',
+  ];
+  // Fetcher settings.
+  $data['fetcher_configuration'] = [
+    'target-id' => '',
+    'file-name' => [
+      'import' => 'import',
+      'offers' => 0,
+    ],
+  ];
+  // Parser settings.
+  $data['parser_configuration'] = [
+    'offers' => 1,
+    'images' => 1,
+    'limit' => '',
+  ];
+  // Processor settings.
+  $data['processor_configuration'] = [
+    'update_existing' => 2,
+    'expire' => -1,
+    'skip_hash_check' => FALSE,
+    'values' => [
+      'type' => 'tovar',
+    ],
+    'owner_id' => 0,
+    'authorize' => FALSE,
+  ];
+  // Dependencies.
+  $data['dependencies'] = [
+    'module' => ['cmlservice'],
+  ];
+  // Mapping.
+  $data['mappings'] = [];
+  $data['mappings'][] = [
+    'target' => 'feeds_item',
+    'map' => [
+      'url' => '',
+      'guid' => 'Id',
+    ],
+    'unique' => [
+      'guid' => 1,
+    ],
+  ];
+  $data['mappings'][] = [
+    'target' => 'title',
+    'map' => [
+      'value' => 'Naimenovanie',
+    ],
+    'unique' => [],
+  ];
+  $data['mappings'][] = [
+    'target' => 'field_tovar_variation',
+    'map' => [
+      'target_id' => 'offers',
+    ],
+    'settings' => [
+      'reference_by' => 'sku',
+      'autocreate' => 0,
+    ],
+  ];
+  $data['mappings'][] = [
+    'target' => 'field_catalog',
+    'map' => [
+      'target_id' => 'Gruppy',
+    ],
+    'settings' => [
+      'reference_by' => 'guid',
+      'autocreate' => 0,
+    ],
+  ];
+  $data['mappings'][] = [
+    'target' => 'field_image',
+    'map' => [
+      'target_id' => 'image',
+      'alt' => '',
+      'title' => '',
+    ],
+    'settings' => [
+      'reference_by' => 'id',
+      'existing' => 2,
+      'autocreate' => 0,
+    ],
+  ];
+  $data['mappings'][] = [
+    'target' => 'field_short',
+    'map' => [
+      'value' => 'Opisanie',
+    ],
+  ];
+  return $data;
+}
+
+/**
+ * Make data for offer feed.
+ */
+function make_data_for_offer_entity() {
+  // Main settings.
+  $data = [
+    'id' => 'offer',
+    'label' => 'Оффер',
+    'description' => '',
+    'import_period' => -1,
+    'fetcher' => 'commerceml',
+    'parser' => 'OffersXmlProductVariationsParcer',
+    'processor' => 'entity:commerce_product_variation',
+  ];
+  // Fetcher settings.
+  $data['fetcher_configuration'] = [
+    'target-id' => '',
+    'file-name' => [
+      'import' => 0,
+      'offers' => 'offers',
+    ],
+  ];
+  // Parser settings.
+  $data['parser_configuration'] = [
+    'limit' => '',
+  ];
+  // Processor settings.
+  $data['processor_configuration'] = [
+    'update_existing' => 2,
+    'expire' => -1,
+    'skip_hash_check' => FALSE,
+    'values' => [
+      'type' => 'default',
+    ],
+    'owner_id' => 0,
+    'authorize' => FALSE,
+  ];
+  // Dependencies.
+  $data['dependencies'] = [
+    'module' => ['cmlservice'],
+  ];
+  // Mapping.
+  $data['mappings'] = [];
+  $data['mappings'][] = [
+    'target' => 'feeds_item',
+    'map' => [
+      'url' => '',
+      'guid' => 'Id',
+    ],
+    'unique' => [
+      'guid' => 1,
+    ],
+  ];
+  $data['mappings'][] = [
+    'target' => 'title',
+    'map' => [
+      'value' => 'Naimenovanie',
+    ],
+    'unique' => [],
+  ];
+  $data['mappings'][] = [
+    'target' => 'sku',
+    'map' => [
+      'value' => 'Id',
+    ],
+    'unique' => [],
+  ];
+  $data['mappings'][] = [
+    'target' => 'price',
+    'map' => [
+      'number' => 'Ceny',
+      'currency_code' => 'Ceny',
+    ],
+  ];
+  return $data;
+}
+
+/**
+ * Make data for catalog feed.
+ */
+function make_data_for_catalog_entity() {
+  // Main settings.
+  $data = [
+    'id' => 'catalog',
+    'label' => 'Каталог',
+    'description' => '',
+    'import_period' => -1,
+    'fetcher' => 'commerceml',
+    'parser' => 'ImportXmlCatalogParcer',
+    'processor' => 'entity:taxonomy_term',
+  ];
+  // Fetcher settings.
+  $data['fetcher_configuration'] = [
+    'target-id' => '',
+    'file-name' => [
+      'import' => 'import',
+      'offers' => 0,
+    ],
+  ];
+  // Processor settings.
+  $data['processor_configuration'] = [
+    'update_existing' => 2,
+    'expire' => -1,
+    'skip_hash_check' => FALSE,
+    'values' => [
+      'vid' => 'catalog',
+    ],
+    'owner_id' => 0,
+    'authorize' => FALSE,
+  ];
+  // Dependencies.
+  $data['dependencies'] = [
+    'module' => ['cmlservice'],
+  ];
+  // Mapping.
+  $data['mappings'] = [];
+  $data['mappings'][] = [
+    'target' => 'feeds_item',
+    'map' => [
+      'url' => '',
+      'guid' => 'uuid',
+    ],
+    'unique' => [
+      'guid' => 1,
+    ],
+  ];
+  $data['mappings'][] = [
+    'target' => 'name',
+    'map' => [
+      'value' => 'name',
+    ],
+    'unique' => [],
+  ];
+  $data['mappings'][] = [
+    'target' => 'weight',
+    'map' => [
+      'value' => 'term_weight',
+    ],
+  ];
+  $data['mappings'][] = [
+    'target' => 'description',
+    'map' => [
+      'value' => 'parent_uid',
+    ],
+    'settings' => [
+      'format' => 'plain_text',
+    ],
+  ];
+  return $data;
+}
