@@ -95,7 +95,31 @@ class XmlObject {
           }
         }
         else {
-          $result = $this->arrayNormalize($field);
+          if (isset($map['type']['inside'])) {
+            $result = $this->arrayNormalize($field[$map['type']['inside']]);
+          }
+          else {
+            $result = $this->arrayNormalize($field);
+          }
+          // Выводим только значения определнного поля.
+          if (isset($map['type']['list'])) {
+            $buffer = [];
+            foreach ($result as $index => $row) {
+              if (isset($row[$map['type']['list']])) {
+                $buffer[] = $row[$map['type']['list']];
+              }
+            }
+            if (count($result) == count($buffer)) {
+              $result = $buffer;
+            }
+            else {
+              $result = NULL;
+            }
+          }
+          // Преобразуем в json.
+          if (isset($map['type']['json']) && $jsonStatement = $map['type']['json']) {
+            $result = json_encode($result, JSON_UNESCAPED_UNICODE);
+          }
         }
       }
       elseif ($map['type'] == 'attr') {

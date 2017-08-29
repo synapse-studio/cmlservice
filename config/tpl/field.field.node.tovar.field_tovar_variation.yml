@@ -1,0 +1,27 @@
+langcode: ru
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_variation_type.default
+    - field.storage.node.field_tovar_variation
+    - node.type.tovar
+id: node.tovar.field_tovar_variation
+field_name: field_tovar_variation
+entity_type: node
+bundle: tovar
+label: Вариации
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:commerce_product_variation'
+  handler_settings:
+    target_bundles:
+      default: default
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

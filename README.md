@@ -21,6 +21,21 @@
 <img src="https://github.com/politsin/help/blob/master/1csett.png?raw=true">
 
 
-
+cd /var/www/html && \
+composer config repositories.drupal composer https://packages.drupal.org/8 && \
+composer require "drupal/commerce 2.x-dev" && \
+composer update && \
+drush en -y commerce_product && \
+git clone https://github.com/synapse-studio/tovar /var/www/html/modules/custom/features/tovar && \
+git clone https://github.com/synapse-studio/cmlservice /var/www/html/modules/custom/cmlservice && \
+git clone -b 8.x-3.x --single-branch https://github.com/drupalprojects/feeds /var/www/html/modules/contrib/feeds && \
+cp /var/www/html/modules/custom/cmlservice/config/tpl/field.field.node.tovar.field_tovar_variation.yml /var/www/html/modules/custom/features/tovar/config/install && \
+cp /var/www/html/modules/custom/cmlservice/config/tpl/field.storage.node.field_tovar_variation.yml /var/www/html/modules/custom/features/tovar/config/install && \
+drush en -y tovar && \
+cp /var/www/html/modules/custom/cmlservice/feeds.patch.txt /var/www/html/modules/contrib/feeds && \
+cd /var/www/html/modules/contrib/feeds && \
+patch -p1 < feeds.patch.txt && \
+drush en -y feeds && \
+drush en -y cmlservice
 
 

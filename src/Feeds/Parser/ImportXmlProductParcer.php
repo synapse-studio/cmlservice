@@ -66,6 +66,22 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
       }
     }
 
+    if (isset($feed->field_feeds_import_restrict->value) && isset($feed->field_feeds_import_offset->value)) {
+      $restrict = $feed->field_feeds_import_restrict->value;
+      $offset = $feed->field_feeds_import_offset->value;
+      $countRaws = count($raws);
+      if (($countRaws > $restrict) && ($offset < $countRaws)) {
+        $raws = array_slice($raws, $offset, $restrict);
+        $feed->field_feeds_import_offset = $offset + $restrict;
+        $feed->save();
+      }
+      elseif ($offset != 0) {
+        $feed->field_feeds_import_offset = 0;
+        $feed->save();
+        $raws = [];
+      }
+    }
+
     if ($raws) {
       $find = FALSE;
       foreach ($raws as $raw) {
@@ -128,6 +144,28 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
   }
 
   /**
+   * Find offer in table.
+   */
+  public function selectOffer($raw) {
+    $result = [];
+    if (isset($raw['Id'])) {
+      $id1c = $raw['Id'];
+      $entity_type = 'commerce_product_variation';
+      $query = \Drupal::entityQuery($entity_type);
+      $query->condition('sku', $id1c . '%', 'LIKE');
+      $ids = $query->execute();
+      $offers = entity_load_multiple($entity_type, $ids);
+      foreach ($offers as $offer) {
+        $sku = $offer->sku->value;
+        if ($sku && strlen($sku) > 20) {
+          $result[] = $sku;
+        }
+      }
+    }
+    return $result;
+  }
+
+  /**
    * HasImage.
    */
   public function hasImage($raw, $images) {
@@ -139,6 +177,22 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
       }
     }
     return $image;
+  }
+
+  /**
+   * Find image in table.
+   */
+  public function selectImage($raw) {
+    $result = [];
+    if (isset($raw['Kartinka'])) {
+      $query = \Drupal::entityQuery('file');
+      $query->condition('uri', '%' . $raw['Kartinka'] . '%', 'LIKE');
+      $query->sort('created', 'DESC');
+      $fleIds = $query->execute();
+      $fid = array_shift($fleIds);
+      $result['id'] = $fid;
+    }
+    return $result;
   }
 
   /**
