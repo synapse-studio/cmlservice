@@ -97,31 +97,3 @@ function cmlservice_delete_old_cml($cmlId) {
 function cmlservice_delete_old_cml_callback() {
   \Drupal::state()->set('cmlservice.cron_last_run', time());
 }
-
-/**
- * Задача для очереди.
- */
-function cmlservice_delete_old_cml($cmlId) {
-  $cml = \Drupal::entityManager()->getStorage('cml')->load($cmlId);
-  if (isset($cml)) {
-    $created = strtotime($cml->field_cml_date->value);
-    $config = \Drupal::config('cmlservice.settings');
-    $month = FALSE;
-    if (!empty($config->get('live-long'))) {
-      $month = strtotime($config->get('live-long'));
-    }
-    if (!$month) {
-      $month = strtotime('now - 1 month');
-    }
-    if ($created < $month) {
-      $cml->delete();
-    }
-  }
-}
-
-/**
- * Done.
- */
-function cmlservice_delete_old_cml_callback() {
-  \Drupal::state()->set('cmlservice.cron_last_run', time());
-}

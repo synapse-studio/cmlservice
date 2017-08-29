@@ -37,7 +37,9 @@ class CatalogParcer extends ControllerBase {
         $id = $val['Ид'];
         $result[$id]['id'] = $val['Ид'];
         $result[$id]['name'] = $val['Наименование'];
-        $result[$id]['parent'] = $parentId && !$parent ? $parentId : NULL;
+        if ($parentId) {
+          $result[$id]['parent'] = $parentId && !$parent ? $parentId : FALSE;
+        }
         $result[$id]['term_weight'] = $i;
         if (!empty($val['Группы']['Группа'])) {
           $result = array_merge($result, self::flatTree($val['Группы']['Группа'], $id, FALSE));

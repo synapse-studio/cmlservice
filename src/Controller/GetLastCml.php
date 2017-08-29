@@ -44,50 +44,6 @@ class GetLastCml extends ControllerBase {
     }
     return array_shift($result);
   }
-  
-  /**
-   * Find old catalogs.
-   */
-  public static function findOldCatalog() {
-    $query = \Drupal::entityQuery('cml');
-    $query->condition('field_cml_xml', 'NULL', '!=')
-      ->condition('field_cml_status', 'done', '=')
-      ->sort('field_cml_date', 'DESC');
-    $result = $query->execute();
-    $operations = [];
-    if (count($result) > 3) {
-      $result = array_slice($result, 3);
-      foreach ($result as $cmlId) {
-        $operations[] = [
-          'cmlservice_delete_old_cml',
-          [
-            $cmlId,
-          ],
-        ];
-      }
-    }
-    return $operations;
-  }
-
-  /**
-   * Find old catalogs.
-   */
-  public static function findEmptyCml() {
-    $query = \Drupal::entityQuery('cml');
-    $query->notExists('field_cml_xml')
-      ->sort('field_cml_date', 'DESC');
-    $result = $query->execute();
-    $operations = [];
-    foreach ($result as $cmlId) {
-      $operations[] = [
-        'cmlservice_delete_old_cml',
-        [
-          $cmlId,
-        ],
-      ];
-    }
-    return $operations;
-  }
 
   /**
    * Find old catalogs.
