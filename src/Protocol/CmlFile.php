@@ -16,7 +16,7 @@ class CmlFile extends ControllerBase {
   public static function file($type = 'import') {
     $result = '';
 
-    if (CmlCheckAuth::auth() || TRUE) {
+    if (CmlCheckAuth::auth()) {
       $cml_id = CmlCheckAuth::check();
       if ($cml_id) {
         if (isset($_GET['filename'])) {

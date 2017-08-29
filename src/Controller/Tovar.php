@@ -5,6 +5,8 @@ namespace Drupal\cmlservice\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\cmlservice\Xml\XmlObject;
 use Drupal\cmlservice\Xml\TovarParcer;
+use Drupal\commerce_product\Entity\ProductVariation;
+use Drupal\node\Entity\Node;
 
 /**
  * Tovar Parcer.
@@ -53,6 +55,47 @@ class Tovar extends ControllerBase {
     return [
       '#markup' => $result,
     ];
+  }
+
+  public static function checkVariation(Node $tovar, $selfSave = FALSE) {
+    $field = $tovar->field_tovar_variation;
+    $variationIds = [];
+    for ($i = 0; $i < $field->count(); $i++) {
+      $variationIds[] = $field->get($i)->getValue()['target_id'];
+    }
+    if (count($variationIds)) {
+      $variations = entity_load_multiple('commerce_product_variation', $variationIds);
+      $exist = FALSE;
+      foreach ($variations as $variation) {
+        if ($exist) {
+          break;
+        }
+        if ($variation->field_product_variation_value->value != 0) {
+          $exist = TRUE;
+        }
+      }
+      $oldExist = isset($tovar->field_tovar_stock->value) ? strtolower($tovar->field_tovar_stock->value) : 'false';
+      $exist = $exist ? 'true' : 'false';
+      if ($oldExist != $exist) {
+        $tovar->set('field_tovar_stock', $exist);
+        if (!$selfSave) {
+          $tovar->save();
+        }
+      }
+    }
+  }
+
+  public static function changeAfterVariationSave(ProductVariation $variation) {
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'tovar')
+      ->condition('field_tovar_variation', $variation->id());
+    $result = $query->execute();
+    if (count($result)) {
+      $entitys = entity_load_multiple('node', $result);
+      foreach ($entitys as $tovar) {
+        self::checkVariation($tovar);
+      }
+    }
   }
 
 }

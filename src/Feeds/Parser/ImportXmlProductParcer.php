@@ -41,31 +41,53 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
     $trans  = new PhpTransliteration();
     $feed_config = $feed->getConfigurationFor($this);
 
-    $offers = $this->queryOffers($feed_config['offers']);
-    $images = $this->queryImages($feed_config['images']);
-
     $xml = $fetcher_result->getRaw();
     $raws = TovarParcer::parce($xml);
     $map = TovarParcer::map();
 
     if ($feed_config['limit']) {
       $raws = array_slice($raws, 0, $feed_config['limit']);
-      dsm($raws);
+      // dsm($raws);
+    }
+
+    if (isset($feed->field_feeds_import_restrict->value) && isset($feed->field_feeds_import_offset->value)) {
+      $restrict = $feed->field_feeds_import_restrict->value;
+      $offset = $feed->field_feeds_import_offset->value;
+      $countRaws = count($raws);
+      if (($countRaws > $restrict) && ($offset < $countRaws)) {
+        $raws = array_slice($raws, $offset, $restrict);
+        $feed->field_feeds_import_offset = $offset + $restrict;
+        $feed->save();
+      }
+      elseif ($offset != 0) {
+        $feed->field_feeds_import_offset = 0;
+        $feed->save();
+        $raws = [];
+      }
     }
 
     if ($raws) {
+      $find = FALSE;
       foreach ($raws as $raw) {
         $item = new DynamicItem();
+        $item_cover = $raw['Dop_Ukrytie'];
+        if ($item_cover == 'true') {
+          $item_cover = 1;
+        } else {
+          $item_cover = 0;
+        }
         foreach ($map as $map_key => $map_info) {
           $name = $trans->transliterate($map_key, '');
           $item->set($name, $raw[$name]);
         }
-        $item->set('image', $this->hasImage($raw, $images));
-        $item->set('offers', $this->hasOffer($raw, $offers));
+        // $item->set('image', $this->hasImage($raw, $images));
+        $item->set('image', $this->selectImage($raw));
+        // $item->set('offers', $this->hasOffer($raw, $offers));
+        $item->set('offers', $this->selectOffer($raw));
+        $item->set('Dop_Ukrytie', $item_cover);
         $result->addItem($item);
       }
     }
-
     return $result;
   }
 
@@ -84,6 +106,28 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
   }
 
   /**
+   * Find offer in table.
+   */
+  public function selectOffer($raw) {
+    $result = [];
+    if (isset($raw['Id'])) {
+      $id1c = $raw['Id'];
+      $entity_type = 'commerce_product_variation';
+      $query = \Drupal::entityQuery($entity_type);
+      $query->condition('sku', $id1c . '%', 'LIKE');
+      $ids = $query->execute();
+      $offers = entity_load_multiple($entity_type, $ids);
+      foreach ($offers as $offer) {
+        $sku = $offer->sku->value;
+        if ($sku && strlen($sku) > 20) {
+          $result[] = $sku;
+        }
+      }
+    }
+    return $result;
+  }
+
+  /**
    * HasImage.
    */
   public function hasImage($raw, $images) {
@@ -95,6 +139,22 @@ class ImportXmlProductParcer extends PluginBase implements ParserInterface {
       }
     }
     return $image;
+  }
+
+  /**
+   * Find image in table.
+   */
+  public function selectImage($raw) {
+    $result = [];
+    if (isset($raw['Kartinka'])) {
+      $query = \Drupal::entityQuery('file');
+      $query->condition('uri', '%' . $raw['Kartinka'] . '%', 'LIKE');
+      $query->sort('created', 'DESC');
+      $fleIds = $query->execute();
+      $fid = array_shift($fleIds);
+      $result['id'] = $fid;
+    }
+    return $result;
   }
 
   /**

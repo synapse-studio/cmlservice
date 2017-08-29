@@ -46,12 +46,37 @@ class OffersXmlProductVariationsParcer extends PluginBase implements ParserInter
       $raws = array_slice($raws, 0, $feed_config['limit']);
       dsm($raws);
     }
+
+    if (isset($feed->field_feeds_import_restrict->value) && isset($feed->field_feeds_import_offset->value)) {
+      $restrict = $feed->field_feeds_import_restrict->value;
+      $offset = $feed->field_feeds_import_offset->value;
+      $countRaws = count($raws);
+      if (($countRaws > $restrict) && ($offset < $countRaws)) {
+        $raws = array_slice($raws, $offset, $restrict);
+        $feed->field_feeds_import_offset = $offset + $restrict;
+        $feed->save();
+      }
+      elseif ($offset != 0) {
+        $feed->field_feeds_import_offset = 0;
+        $feed->save();
+        $raws = [];
+      }
+    }
+
     if ($raws) {
       foreach ($raws as $raw) {
         $item = new DynamicItem();
+        $expect = FALSE;
         foreach ($map as $map_key => $map_info) {
           $name = $trans->transliterate($map_key, '');
           $item->set($name, $raw[$name]);
+          if ($map_key == 'ДатаПоступления' && !empty($raw[$name])) {
+            $expect = TRUE;
+          }
+        }
+        if ($expect) {
+          $name = $trans->transliterate('Количество', '');
+          $item->set($name, -1);
         }
         $result->addItem($item);
       }
