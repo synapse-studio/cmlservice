@@ -12,6 +12,34 @@ use Drupal\Component\Transliteration\PhpTransliteration;
 class OffersParcer extends ControllerBase {
 
   /**
+   * Parce FilePath.
+   */
+  public static function getRows($filepath, $skip_cache = FALSE) {
+    $rows = &drupal_static("OffersParcer::getRows():$filepath");
+    if (!isset($rows)) {
+      $cache_key = 'OffersParcer:' . $filepath;
+      if ($skip_cache) {
+        $cache_key .= rand();
+      }
+      if ($cache = \Drupal::cache()->get($cache_key)) {
+        $rows = $cache->data;
+      }
+      else {
+        if ($filepath) {
+          $xmlObj = new XmlObject();
+          $xmlObj->parseXmlFile($filepath);
+          $data = self::parce($xmlObj->xmlString);
+          if (!empty($data)) {
+            $rows = $data;
+          }
+        }
+        \Drupal::cache()->set($cache_key, $rows);
+      }
+    }
+    return $rows;
+  }
+
+  /**
    * Parce.
    */
   public static function parce($xml) {
@@ -22,8 +50,6 @@ class OffersParcer extends ControllerBase {
     $xmlObj = new XmlObject();
     $xmlObj->parseXmlString($xml);
     $xmlObj->get('offers', 'offer');
-    // Данные находятся в $xmlObj->xmlfind, изменим их в отдельном файле.
-    OffersHack::hack($xmlObj);
     $offers = $xmlObj->xmlfind;
 
     $result = [];

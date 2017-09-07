@@ -26,6 +26,39 @@ class GetLastCml extends ControllerBase {
   }
 
   /**
+   * LastFilePath.
+   */
+  public static function filePath($xmlkey = 'import', $cml_id = FALSE) {
+    $filepath = &drupal_static("GetLastCml::filePath():$xmlkey:$cml_id");
+    if (!isset($filepath)) {
+      $cache_key = "GetLastCml-$xmlkey:$cml_id";
+      if ($cache = \Drupal::cache()->get($cache_key)) {
+        $filepath = $cache->data;
+      }
+      else {
+        $cml = self::load($cml_id);
+        $cml_xml = $cml->field_cml_xml->getValue();
+        $files = [];
+        $data = FALSE;
+        $filekeys[$xmlkey] = TRUE;
+        if (!empty($cml_xml)) {
+          foreach ($cml_xml as $xml) {
+            $file = file_load($xml['target_id']);
+            $filename = $file->getFilename();
+            $filekey = strstr($filename, '.', TRUE);
+            if (isset($filekeys[$filekey]) && $filekeys[$filekey]) {
+              $files[] = $file->getFileUri();
+            }
+          }
+        }
+        $filepath = array_shift($files);
+        \Drupal::cache()->set($cache_key, $filepath);
+      }
+    }
+    return $filepath;
+  }
+
+  /**
    * Query.
    */
   public static function queryLast() {

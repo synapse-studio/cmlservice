@@ -12,6 +12,34 @@ use Symfony\Component\Yaml\Yaml;
 class TovarParcer extends ControllerBase {
 
   /**
+   * Parce FilePath.
+   */
+  public static function getRows($filepath, $skip_cache = FALSE) {
+    $rows = &drupal_static("TovarParcer::getRows():$filepath");
+    if (!isset($rows)) {
+      $cache_key = 'TovarParcer:' . $filepath;
+      if ($skip_cache) {
+        $cache_key .= rand();
+      }
+      if ($cache = \Drupal::cache()->get($cache_key)) {
+        $rows = $cache->data;
+      }
+      else {
+        if ($filepath) {
+          $xmlObj = new XmlObject();
+          $xmlObj->parseXmlFile($filepath);
+          $data = self::parce($xmlObj->xmlString);
+          if (!empty($data)) {
+            $rows = $data;
+          }
+        }
+        \Drupal::cache()->set($cache_key, $rows);
+      }
+    }
+    return $rows;
+  }
+
+  /**
    * Parce.
    */
   public static function parce($xml) {

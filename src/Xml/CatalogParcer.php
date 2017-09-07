@@ -10,6 +10,34 @@ use Drupal\Core\Controller\ControllerBase;
 class CatalogParcer extends ControllerBase {
 
   /**
+   * Parce FilePath.
+   */
+  public static function getRows($filepath, $skip_cache = FALSE) {
+    $rows = &drupal_static("CatalogParcer::getRows():$filepath");
+    if (!isset($rows)) {
+      $cache_key = 'CatalogParcer:' . $filepath;
+      if ($skip_cache) {
+        $cache_key .= rand();
+      }
+      if ($cache = \Drupal::cache()->get($cache_key)) {
+        $rows = $cache->data;
+      }
+      else {
+        if ($filepath) {
+          $xmlObj = new XmlObject();
+          $xmlObj->parseXmlFile($filepath);
+          $data = self::parce($xmlObj->xmlString);
+          if (!empty($data)) {
+            $rows = $data;
+          }
+        }
+        \Drupal::cache()->set($cache_key, $rows);
+      }
+    }
+    return $rows;
+  }
+
+  /**
    * Parce.
    */
   public static function parce($xml, $flatTree = TRUE) {
