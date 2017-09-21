@@ -56,14 +56,16 @@ class TovarParcer extends ControllerBase {
     $result = [];
     if ($products) {
       foreach ($products as $products1c) {
-        $id = $products1c['Ид'];
-        if (strripos($id, '#') === FALSE || !$config->get('hash-skip')) {
-          $product = [];
-          foreach ($map as $map_key => $map_info) {
-            $name = $trans->transliterate($map_key, '');
-            $product[$name] = $xmlObj->prepare($products1c, $map_key, $map_info);
+        $key = $products1c['Ид'];
+        $id = strstr("{$key}#", "#", TRUE);
+        foreach ($map as $map_key => $map_info) {
+          $name = $trans->transliterate($map_key, '');
+          if (isset($map_info['dst']) && $map_info['dst'] == 'offers') {
+            $result[$id]['offers'][$key][$name] = $xmlObj->prepare($products1c, $map_key, $map_info);
           }
-          $result[$id] = $product;
+          else {
+            $result[$id]['product'][$name] = $xmlObj->prepare($products1c, $map_key, $map_info);
+          }
         }
       }
     }

@@ -30,11 +30,6 @@ class SettingsMapping extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('cmlservice.mapsettings');
 
-    $form['hash-skip'] = array(
-      '#title' => $this->t('Hash skip'),
-      '#type' => 'checkbox',
-      '#default_value' => $config->get('hash-skip'),
-    );
     $form['config'] = [
       '#type' => 'details',
       '#title' => $this->t('General settings'),
@@ -72,7 +67,6 @@ class SettingsMapping extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('cmlservice.mapsettings');
     $config
-      ->set('hash-skip', $form_state->getValue('hash-skip'))
       ->set('tovar-standart', $form_state->getValue('tovar-standart'))
       ->set('tovar-dop', $form_state->getValue('tovar-dop'))
       ->set('offers-standart', $form_state->getValue('offers-standart'))

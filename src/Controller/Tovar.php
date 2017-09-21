@@ -38,7 +38,7 @@ class Tovar extends ControllerBase {
       $result .= '<pre>';
       foreach ($data as $key => $value) {
         $result .= $i++ . " - " . $key . "\n";
-        foreach ($value as $k => $v) {
+        foreach ($value['product'] as $k => $v) {
           $result .= "    " . $k . ": ";
           if (!is_array($v)) {
             $result .= $v;
@@ -49,6 +49,9 @@ class Tovar extends ControllerBase {
           $result .= "\n";
         }
         $result .= "\n";
+        $result .= "Offers:\n";
+        $result .= Yaml::dump($value['offers']);
+        $result .= "\n\n\n";
       }
       $result .= '</pre>';
     }
