@@ -60,6 +60,9 @@ class TovarParcer extends ControllerBase {
         $id = strstr("{$key}#", "#", TRUE);
         foreach ($map as $map_key => $map_info) {
           $name = $trans->transliterate($map_key, '');
+          if (!isset($result[$id]['offers'][$key])) {
+            $result[$id]['offers'][$key] = [];
+          }
           if (isset($map_info['dst']) && $map_info['dst'] == 'offers') {
             $result[$id]['offers'][$key][$name] = $xmlObj->prepare($products1c, $map_key, $map_info);
           }

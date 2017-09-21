@@ -7,6 +7,7 @@ use Drupal\cmlservice\Xml\XmlObject;
 use Drupal\cmlservice\Xml\TovarParcer;
 use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\node\Entity\Node;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Tovar Parcer.
