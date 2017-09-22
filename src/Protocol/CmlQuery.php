@@ -124,7 +124,6 @@ class CmlQuery extends ControllerBase {
         }
       }
     }
-    $sales->formatOutput = TRUE;
     $sales->asXML($fileUri);
   }
 
