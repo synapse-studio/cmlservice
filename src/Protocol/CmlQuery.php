@@ -79,7 +79,7 @@ class CmlQuery extends ControllerBase {
    * Формируем данные по заказам в хмл.
    */
   public static function makeXmlExportOrders($fileUri) {
-    $sales = new SimpleXMLElement('<КоммерческаяИнформация/>');
+    $sales = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><КоммерческаяИнформация/>');
     $sales->addAttribute('ВерсияСхемы', '2.09');
     $date = format_date(time(), 'custom', 'Y-m-d');
     $sales->addAttribute('ДатаФормирования', $date);
@@ -110,20 +110,21 @@ class CmlQuery extends ControllerBase {
       $theGoods = $document->addChild('Товары');
 
       $orderItemsObj = $order->order_items;
+
       for ($orderItemPlace = 0; $orderItemPlace < $orderItemsObj->count(); $orderItemPlace++) {
         foreach ($orderItemsObj->get($orderItemPlace)->getValue() as $key => $itemId) {
           $orderItem = \Drupal::entityManager()->getStorage('commerce_order_item')->load($itemId);
-          $goods = $theGoods->addChild('Товар');
-          $goods->addChild('ЦенаЗаЕдиницу', $orderItem->getUnitPrice());
-          $goods->addChild('Сумма', $orderItem->getTotalPrice());
-          $goods->addChild('Количество', $orderItem->getQuantity());
-          // $offer = \Drupal::entityManager()->getStorage('commerce_product_variation')->load($itemId);
           $offer = $orderItem->getPurchasedEntity();
+          $goods = $theGoods->addChild('Товар');
           $goods->addChild('Ид', $offer->getSku());
+          $goods->addChild('Наименование', $offer->getTitle());
+          $goods->addChild('ЦенаЗаЕдиницу', $orderItem->getUnitPrice());
+          $goods->addChild('Количество', $orderItem->getQuantity());
+          $goods->addChild('Сумма', $orderItem->getTotalPrice());
         }
       }
     }
-
+    $sales->formatOutput = TRUE;
     $sales->asXML($fileUri);
   }
 
