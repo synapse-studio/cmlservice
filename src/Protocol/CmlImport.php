@@ -19,7 +19,7 @@ class CmlImport extends ControllerBase {
       $query = \Drupal::entityQuery('cml');
       $query->condition('field_cml_xml', 'NULL', '!=')
         ->condition('field_cml_status', 'done', '!=')
-        ->sort('field_cml_date', 'ASC')
+        ->sort('created', 'ASC')
         ->range(0, 1);
       $result = $query->execute();
       if (count($result)) {

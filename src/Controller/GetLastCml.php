@@ -65,13 +65,13 @@ class GetLastCml extends ControllerBase {
     $query = \Drupal::entityQuery('cml');
     $query->condition('field_cml_xml', 'NULL', '!=')
       ->condition('field_cml_status', 'done', '!=')
-      ->sort('field_cml_date', 'ASC')
+      ->sort('created', 'ASC')
       ->range(0, 1);
     $result = $query->execute();
     if (!count($result)) {
       $query = \Drupal::entityQuery('cml');
       $query->condition('field_cml_xml', 'NULL', '!=')
-        ->sort('field_cml_date', 'DESC')
+        ->sort('created', 'DESC')
         ->range(0, 1);
       $result = $query->execute();
     }
@@ -85,7 +85,7 @@ class GetLastCml extends ControllerBase {
     $query = \Drupal::entityQuery('cml');
     $query->condition('field_cml_xml', 'NULL', '!=')
       ->condition('field_cml_status', 'done', '=')
-      ->sort('field_cml_date', 'DESC');
+      ->sort('created', 'DESC');
     $result = $query->execute();
     $operations = [];
     if (count($result) > 3) {
@@ -108,7 +108,7 @@ class GetLastCml extends ControllerBase {
   public static function findEmptyCml() {
     $query = \Drupal::entityQuery('cml');
     $query->notExists('field_cml_xml')
-      ->sort('field_cml_date', 'DESC');
+      ->sort('created', 'DESC');
     $result = $query->execute();
     $operations = [];
     foreach ($result as $cmlId) {
