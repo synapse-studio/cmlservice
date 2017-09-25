@@ -154,9 +154,10 @@ class CmlCheckAuth extends ControllerBase {
   public static function cmlItemSet($type, $login) {
     $storage = \Drupal::entityManager()->getStorage('cml');
     $cml = $storage->create([
-      'field_cml_login' => $login,
-      'field_cml_type' => $type,
-      'field_cml_ip' => \Drupal::request()->getClientIp(),
+      'name' => "Exchenge $type - " . format_date(time(), "custom", 'd.m.Y H:i:s'),
+      'login' => $login,
+      'type' => $type,
+      'ip' => \Drupal::request()->getClientIp(),
     ]);
     $cml->save();
     $result = [

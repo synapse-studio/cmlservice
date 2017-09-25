@@ -1,17 +1,11 @@
-uuid: 21fc53d0-6fdc-49bc-9a08-e7a07af141ec
 langcode: ru
 status: true
 dependencies:
   config:
-    - field.storage.cml.field_cml_date
-    - field.storage.cml.field_cml_ip
-    - field.storage.cml.field_cml_login
     - field.storage.cml.field_cml_status
-    - field.storage.cml.field_cml_type
     - field.storage.cml.field_cml_xml
   module:
     - cmlservice
-    - datetime
     - file
     - options
 id: cml
@@ -163,78 +157,14 @@ display:
           entity_type: cml
           entity_field: id
           plugin_id: field
-        field_cml_date:
-          id: field_cml_date
-          table: cml__field_cml_date
-          field: field_cml_date
+        name:
+          id: name
+          table: cml
+          field: name
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Дата обмена'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: true
-            path: 'admin/structure/cml/{{ id }}'
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: datetime_default
-          settings:
-            timezone_override: ''
-            format_type: short
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_cml_xml:
-          id: field_cml_xml
-          table: cml__field_cml_xml
-          field: field_cml_xml
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'XML file'
+          label: Name
           exclude: false
           alter:
             alter_text: false
@@ -275,10 +205,11 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: display
-          type: file_default
-          settings: {  }
-          group_column: ''
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          group_column: value
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -286,8 +217,10 @@ display:
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: '<br>'
+          separator: ', '
           field_api_classes: false
+          entity_type: cml
+          entity_field: name
           plugin_id: field
         field_cml_status:
           id: field_cml_status
@@ -351,14 +284,14 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_cml_login:
-          id: field_cml_login
-          table: cml__field_cml_login
-          field: field_cml_login
+        login:
+          id: login
+          table: cml
+          field: login
           relationship: none
           group_type: group
           admin_label: ''
-          label: '1c Login'
+          label: '1C Login'
           exclude: false
           alter:
             alter_text: false
@@ -413,73 +346,13 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          entity_type: cml
+          entity_field: login
           plugin_id: field
-        field_cml_type:
-          id: field_cml_type
-          table: cml__field_cml_type
-          field: field_cml_type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Type
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: list_default
-          settings: {  }
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_cml_ip:
-          id: field_cml_ip
-          table: cml__field_cml_ip
-          field: field_cml_ip
+        ip:
+          id: ip
+          table: cml
+          field: ip
           relationship: none
           group_type: group
           admin_label: ''
@@ -538,13 +411,209 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          entity_type: cml
+          entity_field: ip
+          plugin_id: field
+        type:
+          id: type
+          table: cml
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Type
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: cml
+          entity_field: type
+          plugin_id: field
+        created:
+          id: created
+          table: cml
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Создано
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: timestamp
+          settings:
+            date_format: short
+            custom_date_format: ''
+            timezone: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: cml
+          entity_field: created
+          plugin_id: field
+        field_cml_xml:
+          id: field_cml_xml
+          table: cml__field_cml_xml
+          field: field_cml_xml
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'XML file'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: display
+          type: file_default
+          settings: {  }
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: '<br>'
+          field_api_classes: false
           plugin_id: field
       filters: {  }
       sorts:
-        field_cml_date_value:
-          id: field_cml_date_value
-          table: cml__field_cml_date
-          field: field_cml_date_value
+        created:
+          id: created
+          table: cml
+          field: created
           relationship: none
           group_type: group
           admin_label: ''
@@ -553,7 +622,9 @@ display:
           expose:
             label: ''
           granularity: second
-          plugin_id: datetime
+          entity_type: cml
+          entity_field: created
+          plugin_id: date
       title: 'Cml entity list'
       header: {  }
       footer: {  }
@@ -568,11 +639,7 @@ display:
         - 'languages:language_interface'
         - url.query_args
       tags:
-        - 'config:field.storage.cml.field_cml_date'
-        - 'config:field.storage.cml.field_cml_ip'
-        - 'config:field.storage.cml.field_cml_login'
         - 'config:field.storage.cml.field_cml_status'
-        - 'config:field.storage.cml.field_cml_type'
         - 'config:field.storage.cml.field_cml_xml'
   page_1:
     display_plugin: page
@@ -589,9 +656,5 @@ display:
         - 'languages:language_interface'
         - url.query_args
       tags:
-        - 'config:field.storage.cml.field_cml_date'
-        - 'config:field.storage.cml.field_cml_ip'
-        - 'config:field.storage.cml.field_cml_login'
         - 'config:field.storage.cml.field_cml_status'
-        - 'config:field.storage.cml.field_cml_type'
         - 'config:field.storage.cml.field_cml_xml'

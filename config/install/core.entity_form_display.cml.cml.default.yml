@@ -1,61 +1,62 @@
-uuid: a6d35ffc-2113-442b-a628-0d77e3b78cb2
 langcode: ru
 status: true
 dependencies:
   config:
-    - field.field.cml.cml.field_cml_date
-    - field.field.cml.cml.field_cml_ip
-    - field.field.cml.cml.field_cml_login
     - field.field.cml.cml.field_cml_status
-    - field.field.cml.cml.field_cml_type
     - field.field.cml.cml.field_cml_xml
   module:
     - cmlservice
-    - datetime
     - file
-_core:
-  default_config_hash: Knhil4b63kVl-b93q30imYBQ4sE1n-hCi4VUME-BiYg
 id: cml.cml.default
 targetEntityType: cml
 bundle: cml
 mode: default
 content:
-  field_cml_date:
-    weight: 0
-    settings: {  }
-    third_party_settings: {  }
-    type: datetime_default
-  field_cml_ip:
-    type: string_textfield
-    weight: 3
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_cml_login:
-    type: string_textfield
-    weight: 2
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_cml_status:
-    weight: 4
+    weight: 3
     settings: {  }
     third_party_settings: {  }
     type: options_select
-  field_cml_type:
-    type: options_select
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
+    region: content
   field_cml_xml:
     type: file_generic
     weight: 5
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+    region: content
+  ip:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  login:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  type:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   langcode: true
-  name: true
   user_id: true
