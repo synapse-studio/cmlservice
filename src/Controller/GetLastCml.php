@@ -37,21 +37,23 @@ class GetLastCml extends ControllerBase {
       }
       else {
         $cml = self::load($cml_id);
-        $cml_xml = $cml->field_cml_xml->getValue();
-        $files = [];
-        $data = FALSE;
-        $filekeys[$xmlkey] = TRUE;
-        if (!empty($cml_xml)) {
-          foreach ($cml_xml as $xml) {
-            $file = file_load($xml['target_id']);
-            $filename = $file->getFilename();
-            $filekey = strstr($filename, '.', TRUE);
-            if (isset($filekeys[$filekey]) && $filekeys[$filekey]) {
-              $files[] = $file->getFileUri();
+        if ($cml) {
+          $cml_xml = $cml->field_cml_xml->getValue();
+          $files = [];
+          $data = FALSE;
+          $filekeys[$xmlkey] = TRUE;
+          if (!empty($cml_xml)) {
+            foreach ($cml_xml as $xml) {
+              $file = file_load($xml['target_id']);
+              $filename = $file->getFilename();
+              $filekey = strstr($filename, '.', TRUE);
+              if (isset($filekeys[$filekey]) && $filekeys[$filekey]) {
+                $files[] = $file->getFileUri();
+              }
             }
           }
+          $filepath = array_shift($files);
         }
-        $filepath = array_shift($files);
         \Drupal::cache()->set($cache_key, $filepath);
       }
     }
