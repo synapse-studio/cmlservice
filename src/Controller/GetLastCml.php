@@ -53,8 +53,8 @@ class GetLastCml extends ControllerBase {
             }
           }
           $filepath = array_shift($files);
+          \Drupal::cache()->set($cache_key, $filepath);
         }
-        \Drupal::cache()->set($cache_key, $filepath);
       }
     }
     return $filepath;
