@@ -15,8 +15,11 @@ settings:
       value: new
       label: new
     -
-      value: done
-      label: done
+      value: progress
+      label: progress
+    -
+      value: success
+      label: success
   allowed_values_function: ''
 module: options
 locked: false
