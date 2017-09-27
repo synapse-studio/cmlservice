@@ -15,6 +15,12 @@ class GetLastCml extends ControllerBase {
   public static function load($cml_id = FALSE) {
     $cml = FALSE;
 
+    // 1C Importing in proccess.
+    $proccess = \Drupal::config('cmlservice.settings')->get('current-import');
+    if ($proccess) {
+      $cml_id = (int) $proccess;
+    }
+
     if (!is_numeric($cml_id)) {
       $cml_id = self::queryLast();
     }
@@ -29,6 +35,10 @@ class GetLastCml extends ControllerBase {
    * LastFilePath.
    */
   public static function filePath($xmlkey = 'import', $cml_id = FALSE) {
+    $cml = self::load($cml_id);
+    if (is_object($cml)) {
+      $cml_id = $cml->id();
+    }
     $filepath = &drupal_static("GetLastCml::filePath():$xmlkey:$cml_id");
     if (!isset($filepath)) {
       $cache_key = "GetLastCml-$xmlkey:$cml_id";
@@ -36,8 +46,7 @@ class GetLastCml extends ControllerBase {
         $filepath = $cache->data;
       }
       else {
-        $cml = self::load($cml_id);
-        if ($cml) {
+        if (is_object($cml)) {
           $cml_xml = $cml->field_cml_xml->getValue();
           $files = [];
           $data = FALSE;

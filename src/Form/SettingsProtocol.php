@@ -92,20 +92,13 @@ class SettingsProtocol extends ConfigFormBase {
       '#size' => 15,
       '#type' => 'textfield',
     ];
-    $form['cml']['feeds_order'] = [
-      '#title' => $this->t('Feeds order in YAML'),
-      '#default_value' => $config->get('feeds-order', ''),
+    $form['cml']['current-import'] = [
+      '#title' => $this->t('Current Import'),
+      '#default_value' => $config->get('current-import', 0),
+      '#maxlength' => 20,
       '#required' => FALSE,
-      '#type' => 'textarea',
-      '#description' => '
-        Example:
-        <br>
-        (status): {feedId: (id), next: (next_status)}
-        <br>
-        ...
-        <br>
-        (last): {feedId: false, next: (done status)}
-      ',
+      '#size' => 15,
+      '#type' => 'textfield',
     ];
     $form['cml']['live_long'] = [
       '#title' => $this->t('Live long'),
@@ -140,7 +133,7 @@ class SettingsProtocol extends ConfigFormBase {
       ->set('zip', $form_state->getValue('zip'))
       ->set('images-path', $form_state->getValue('images_path'))
       ->set('file-limit', $form_state->getValue('file_limit'))
-      ->set('feeds-order', $form_state->getValue('feeds_order'))
+      ->set('current-import', $form_state->getValue('current-import'))
       ->set('live-long', $form_state->getValue('live_long'))
       ->save();
   }

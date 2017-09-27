@@ -3,8 +3,6 @@
 namespace Drupal\cmlservice\Protocol;
 
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\Yaml\Yaml;
-use Drupal\feeds\Entity\Feed;
 
 /**
  * Controller routines for page example routes.
@@ -16,18 +14,11 @@ class CmlImport extends ControllerBase {
    */
   public static function main() {
     if (CmlCheckAuth::auth()) {
-      $query = \Drupal::entityQuery('cml');
-      $query->condition('field_cml_xml', 'NULL', '!=')
-        ->condition('field_cml_status', 'done', '!=')
-        ->sort('created', 'ASC')
-        ->range(0, 1);
-      $result = $query->execute();
-      if (count($result)) {
-        $config = \Drupal::config('cmlservice.settings');
-        $feedsOrder = Yaml::parse($config->get('feeds-order'));
-        if (isset($feedsOrder)) {
-          return self::processData($feedsOrder, array_shift($result));
-        }
+      $cmlid = self::queryLast();
+      $migrations = self::getMigrations();
+      if (is_numeric($cmlid) && !empty($migrations)) {
+        Cml::debug(__CLASS__, "processData: $cmlid");
+        return self::processData($migrations, $cmlid);
       }
       return 'success';
     }
@@ -40,67 +31,102 @@ class CmlImport extends ControllerBase {
   }
 
   /**
-   * Обрабатывает полученные данные.
+   * Import.
    */
-  public static function processData($feedsOrder, $cmlId) {
-    $cml = \Drupal::entityManager()->getStorage('cml')->load($cmlId);
-    $cmlStatus = $cml->field_cml_status->value;
-    if (isset($feedsOrder[$cmlStatus])) {
-      $feedSets = $feedsOrder[$cmlStatus];
-      if (is_numeric($feedSets['feedId'])) {
-        $result = self::feedCronRun($feedSets['feedId'], $cml->getCreatedTime());
-        switch ($result) {
-          case 'imported':
-            $cml->field_cml_status = $feedSets['next'];
-            $cml->save();
-            break;
+  public static function processData($migrations, $cmlid, $debug) {
+    $result = 'progress';
+    $config = \Drupal::configFactory()->getEditable('cmlservice.settings');
+    $id = \Drupal::config('cmlservice.settings')->get('current-import');
+    if (is_numeric($cmlid)) {
+      $config->set('current-import', $cmlid)->save();
+      $cml = \Drupal::entityManager()->getStorage('cml')->load($cmlid);
+      $time = $cml->created->value;
+      $status = $cml->field_cml_status->value;
+      if ($status == 'new') {
+        $config->set('current-import', $cmlid)->save();
+        $cml->field_cml_status->setValue('progress');
+        $cml->save();
+        // Good.
+        $command = "nohup drush mi --group=cml --update > /dev/null";
+        // Bad.
+        $command = "drush mi --group=cml --update > /dev/null 2>/dev/null &";
+        if (!$debug) {
+          exec($command);
         }
       }
-      else {
-        $cml->field_cml_status = $feedSets['next'];
-        $cml->save();
+      if ($status == 'progress') {
+        $config->set('current-import', $cmlid)->save();
+        $progress = 'Idle';
+        foreach ($migrations as $key => $migration) {
+          if ($migration['status'] != 'Idle') {
+            $progress = $migration['status'];
+          }
+        }
+        if ($progress != 'Idle') {
+          // Proccess.
+        }
+        else {
+          Cml::debug(__CLASS__, "$cmlid: success");
+          $cml->field_cml_status->setValue('success');
+          $config->set('current-import', FALSE)->save();
+          $cml->save();
+        }
       }
-      return 'progress';
+      if ($status == 'success') {
+        $result = 'success';
+      }
+      Cml::debug(__CLASS__, "$cmlid: $status: $result");
     }
-    else {
-      return 'failure';
-    }
+    return $result;
   }
 
   /**
-   * Дать задачу на запуск фидса.
+   * Query.
    */
-  public static function feedCronRun($id, $created) {
-    $feed = Feed::load($id);
-    if (isset($feed->field_feeds_import_offset->value)) {
-      $offset = $feed->field_feeds_import_offset->value > 0 ? TRUE : FALSE;
+  public static function queryLast() {
+    $query = \Drupal::entityQuery('cml');
+    $query->condition('field_cml_xml', 'NULL', '!=')
+      ->condition('field_cml_status', 'success', '!=')
+      ->condition('type', 'catalog')
+      ->sort('created', 'ASC');
+    $result = $query->execute();
+    return array_shift($result);
+  }
+
+  /**
+   * Get migrations.
+   */
+  public static function getMigrations() {
+    $migrations = [];
+    $manager = FALSE;
+    try {
+      $manager = \Drupal::service('plugin.manager.config_entity_migration');
     }
-    else {
-      $offset = FALSE;
+    catch (\Exception $e) {
+      return FALSE;
     }
-    if (($feed->getImportedTime() > $created) && !$offset) {
-      return 'imported';
-    }
-    if (!$feed->isLocked()) {
-      $queue = \Drupal::queue('feeds_feed_import:' . $feed->bundle());
-      $items = $queue->numberOfItems();
-      if ($items == 0) {
-        if ($queue->createItem($feed)) {
-          $feed->setQueuedTime(REQUEST_TIME);
-          $feed->save();
-          return 'created';
-        }
-        else {
-          return 'failure';
+    if ($manager) {
+      $plugins = $manager->createInstances([]);
+      if (!empty($plugins)) {
+        foreach ($plugins as $id => $migration) {
+          if ($migration->migration_group == 'cml') {
+            $source_plugin = $migration->getSourcePlugin();
+            $map = $migration->getIdMap();
+            $migrations[$id] = [
+              'id' => $migration->id(),
+              'label' => $migration->label(),
+              'group' => $migration->get('migration_group'),
+              'status' => $migration->getStatusLabel(),
+              'total' => $source_plugin->count(),
+              'imported' => (int) $map->importedCount(),
+              'messages' => $map->messageCount(),
+              'last' => \Drupal::keyValue('migrate_last_imported')->get($migration->id(), FALSE),
+            ];
+          }
         }
       }
-      else {
-        return 'exist';
-      }
     }
-    else {
-      return 'locked';
-    }
+    return $migrations;
   }
 
 }
