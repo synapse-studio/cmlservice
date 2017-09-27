@@ -20,6 +20,9 @@ settings:
     -
       value: success
       label: success
+    -
+      value: failure
+      label: failure
   allowed_values_function: ''
 module: options
 locked: false

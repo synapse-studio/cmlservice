@@ -92,6 +92,14 @@ class SettingsProtocol extends ConfigFormBase {
       '#size' => 15,
       '#type' => 'textfield',
     ];
+    $form['cml']['import-time'] = [
+      '#title' => $this->t('Import Max Time (min)'),
+      '#default_value' => $config->get('import-time', 30),
+      '#maxlength' => 20,
+      '#required' => FALSE,
+      '#size' => 15,
+      '#type' => 'textfield',
+    ];
     $form['cml']['current-import'] = [
       '#title' => $this->t('Current Import'),
       '#default_value' => $config->get('current-import', 0),
@@ -133,6 +141,7 @@ class SettingsProtocol extends ConfigFormBase {
       ->set('zip', $form_state->getValue('zip'))
       ->set('images-path', $form_state->getValue('images_path'))
       ->set('file-limit', $form_state->getValue('file_limit'))
+      ->set('import-time', $form_state->getValue('import-time'))
       ->set('current-import', $form_state->getValue('current-import'))
       ->set('live-long', $form_state->getValue('live_long'))
       ->save();

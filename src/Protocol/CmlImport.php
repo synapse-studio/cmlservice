@@ -64,11 +64,21 @@ class CmlImport extends ControllerBase {
         }
         if ($progress != 'Idle') {
           // Proccess.
+          // if too long.
+          $min = $id = \Drupal::config('cmlservice.settings')->get('import-time');
+          empty($min) ?? $min = 60;
+          if ($cml->changed->value + 60 * $min < REQUEST_TIME) {
+            \Drupal::logger('cmlservice')->error("cml:$cmlid import failure.");
+            $config->set('current-import', FALSE)->save();
+            $cml->field_cml_status->setValue('failure');
+            $cml->save();
+            $result = 'failure';
+          }
         }
         else {
           Cml::debug(__CLASS__, "$cmlid: success");
-          $cml->field_cml_status->setValue('success');
           $config->set('current-import', FALSE)->save();
+          $cml->field_cml_status->setValue('success');
           $cml->save();
         }
       }
@@ -86,7 +96,7 @@ class CmlImport extends ControllerBase {
   public static function queryLast() {
     $query = \Drupal::entityQuery('cml');
     $query->condition('field_cml_xml', 'NULL', '!=')
-      ->condition('field_cml_status', 'success', '!=')
+      ->condition('field_cml_status', ['success', 'failure'], 'NOT IN')
       ->condition('type', 'catalog')
       ->sort('created', 'ASC');
     $result = $query->execute();
