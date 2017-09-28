@@ -43,7 +43,6 @@ class TovarParcer extends ControllerBase {
    * Parce.
    */
   public static function parce($xml) {
-    $import_files_url = file_create_url('public://cml-files/img/');
     $config = \Drupal::config('cmlservice.mapsettings');
     $trans = new PhpTransliteration();
     $map = self::map();
