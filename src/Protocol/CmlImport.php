@@ -68,11 +68,13 @@ class CmlImport extends ControllerBase {
           $min = $id = \Drupal::config('cmlservice.settings')->get('import-time');
           empty($min) ?? $min = 60;
           if ($cml->changed->value + 60 * $min < REQUEST_TIME) {
-            \Drupal::logger('cmlservice')->error("cml:$cmlid import failure.");
+            $date1 = format_date($cml->changed->value + 60 * $min, 'custom', "dM H:i:s");
+            $date2 = format_date(REQUEST_TIME, 'custom', "dM H:i:s");
+            \Drupal::logger('cmlservice')->error("cml:$cmlid import timeout failure. $date1 < $date2");
             $config->set('current-import', FALSE)->save();
             $cml->field_cml_status->setValue('failure');
-            $cml->save();
-            $result = 'failure';
+            //$cml->save();
+            //$result = 'failure';
           }
         }
         else {
