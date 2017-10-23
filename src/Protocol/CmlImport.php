@@ -112,7 +112,7 @@ class CmlImport extends ControllerBase {
     $migrations = [];
     $manager = FALSE;
     try {
-      $manager = \Drupal::service('plugin.manager.config_entity_migration');
+      $manager = \Drupal::service('plugin.manager.migration');
     }
     catch (\Exception $e) {
       return FALSE;
