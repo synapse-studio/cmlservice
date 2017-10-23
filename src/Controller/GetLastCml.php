@@ -75,8 +75,8 @@ class GetLastCml extends ControllerBase {
   public static function queryLast() {
     $query = \Drupal::entityQuery('cml');
     $query->condition('field_cml_xml', 'NULL', '!=')
-      ->condition('field_cml_status', 'done', '!=')
-      ->sort('created', 'ASC')
+      ->condition('field_cml_status', 'success', '!=')
+      ->sort('created', 'DESC')
       ->range(0, 1);
     $result = $query->execute();
     if (!count($result)) {
