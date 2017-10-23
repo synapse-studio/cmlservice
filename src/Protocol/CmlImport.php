@@ -33,7 +33,7 @@ class CmlImport extends ControllerBase {
   /**
    * Import.
    */
-  public static function processData($migrations, $cmlid, $debug) {
+  public static function processData($migrations, $cmlid, $debug = FALSE) {
     $result = 'progress';
     $config = \Drupal::configFactory()->getEditable('cmlservice.settings');
     $id = \Drupal::config('cmlservice.settings')->get('current-import');
