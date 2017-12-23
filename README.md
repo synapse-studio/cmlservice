@@ -1,9 +1,18 @@
 # Выгрузка товаров из 1с в Drupal 8
-*NB - это стартовый модуль для разработчиков.
-## Задачи:
- * отладка обмена
- * основа для создания продакшен-решений
- * понять структуру обмена
+Модуль разделён на 2 и выложен на drupal.org:
+ * **Commerce ML API** https://www.drupal.org/project/cmlapi
+ * **Commerce ML Exchange** https://www.drupal.org/project/cmlexchange
+ * Рекомендуем к ним добавить **Commerce ML Migrations** https://www.drupal.org/project/cmlmigrations
+
+## Commerce ML API 
+ * хранение информации об обменах
+ * парсинг XML
+ 
+## Commerce ML Exchange 
+ * обеспечение протокола обмена
+
+## Commerce ML Migrations
+ * загрузка информации из import.xml и offers.xml в каталог-таксономию и drupal_commerce
 
 ## Модуль служит для интеграции 1С и Друпал8 по протоколу CommerceML
 
