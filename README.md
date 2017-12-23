@@ -1,4 +1,4 @@
-# Выгрузка товаров из 1с УНФ/УТ в Drupal 8 - Drupal Commerce
+# Выгрузка из 1с УНФ/УТ в Drupal 8 - Drupal Commerce
 Модуль разделён на 2 и выложен на drupal.org:
  * **Commerce ML API** https://www.drupal.org/project/cmlapi
  * **Commerce ML Exchange** https://www.drupal.org/project/cmlexchange
