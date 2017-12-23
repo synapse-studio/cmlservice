@@ -5,7 +5,7 @@
  * Рекомендуем к ним добавить **Commerce ML Migrations** https://www.drupal.org/project/cmlmigrations
 
 ## Commerce ML API 
- * хранение информации об обменах
+ * хранение и управление информацей об обменах
  * парсинг XML
  
 ## Commerce ML Exchange 
